@@ -120,25 +120,35 @@ def mono_ticks(fig):
 def finish(fig, title, subtitle, source, path, note=None):
     fig.text(0.075, 0.95, title, fontsize=19.5, fontweight="bold", ha="left", va="top", color=TEXT)
     fig.text(0.075, 0.875, subtitle, fontsize=12.5, ha="left", va="top", color=MUTED)
-    note_txt = None
-    if note:
-        fig.subplots_adjust(bottom=0.17)
-        note_txt = fig.text(0.075, 0.058, note, fontsize=9.5, color=MUTED, ha="left", va="bottom", style="italic")
     src = fig.text(0.075, 0.026, f"SOURCE: {source}".upper(), fontsize=8.5, color=MUTED, ha="left",
                    va="bottom", fontfamily=MONO)
     mark = fig.text(0.975, 0.026, "THANKSGIVING DINNER PRICE INDEX", fontsize=8.5, color=RED,
                     fontweight="bold", ha="right", va="bottom", fontfamily=MONO)
-    # Wrap the source line if it would run into the project mark
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
-    room = mark.get_window_extent(r).x0 - src.get_window_extent(r).x0 - 20
-    width = src.get_window_extent(r).width
-    if width > room:
-        chars = int(len(src.get_text()) * room / width)
-        src.set_text(textwrap.fill(src.get_text(), chars))
-        fig.subplots_adjust(bottom=fig.subplotpars.bottom + 0.03)
-        if note_txt is not None:
-            note_txt.set_y(0.088)
+    fig_h = fig.bbox.height
+
+    def fit(txt, right_px):
+        """Wrap a text object so it ends before right_px."""
+        ext = txt.get_window_extent(r)
+        room = right_px - ext.x0
+        if ext.width > room:
+            chars = max(20, int(len(txt.get_text()) * room / ext.width))
+            txt.set_text(textwrap.fill(txt.get_text(), chars))
+            fig.canvas.draw()
+
+    # Source line: wrap if it would run into the project mark
+    fit(src, mark.get_window_extent(r).x0 - 20)
+    top = src.get_window_extent(r).y1 / fig_h
+    # Optional note: stacked above the source, wrapped to the full width
+    if note:
+        note_txt = fig.text(0.075, top + 0.012, note, fontsize=9.5, color=MUTED, ha="left", va="bottom",
+                            style="italic")
+        fig.canvas.draw()
+        fit(note_txt, 0.975 * fig.bbox.width)
+        top = note_txt.get_window_extent(r).y1 / fig_h
+    # Leave room above the footer for the x-axis tick labels
+    fig.subplots_adjust(bottom=max(fig.subplotpars.bottom, top + 0.075))
     mono_ticks(fig)
     fig.savefig(path)
     plt.close(fig)

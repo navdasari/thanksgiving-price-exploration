@@ -226,7 +226,12 @@ cs.unit_on_top(ax, prefix="$")
 pct19 = 100 * (total[latest] / total[2019] - 1)
 cs.finish(fig, f"Thanksgiving dinner for 10 costs ${total[latest]:.0f}, {pct19:.0f}% more than in 2019",
           "Cost at October prices, as paid. Full menu: turkey, ham, sides, rolls, pumpkin pie and baking staples.",
-          SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png")
+          SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png",
+          note=("How this improves on the Farm Bureau survey: we price the full expanded menu, not the "
+                "leaner classic list, using BLS national average shelf prices collected the same way every "
+                "October since 1995 rather than a volunteer spot-check, and we fill the turkey price BLS "
+                "stopped publishing in 2020 with a backtested machine-learning ensemble (about 8% "
+                "average October error)."))
 
 # 2. Indexes
 fig, ax = cs.figure()
