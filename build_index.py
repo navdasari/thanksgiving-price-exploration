@@ -162,24 +162,22 @@ import chart_style as cs
 
 SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 
-# 1. Nominal cost and cost relative to overall prices, with the Farm Bureau benchmark
+# 1. Cost as paid, with the Farm Bureau benchmark (comparison with overall prices is chart 2)
 fig, ax = cs.figure()
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
 ax.text(2019.7, 31.5, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
-ax.plot(real_total.index, real_total, color=cs.BLUE)
 ax.plot(total.index, total, color=cs.RED)
 ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
 ax.plot(afbf.index, afbf, color=cs.GRAY, lw=2, marker="o", ms=4)
 ax.set_xlim(1994, latest + 1)
-ax.set_ylim(25, 77)
+ax.set_ylim(25, 70)
 cs.baseline(ax, 25)
-ax.text(1996, 69.5, f"In {latest} dollars", color=cs.BLUE, fontsize=11, fontweight="bold")
-ax.text(2004, 29.5, "As paid", color=cs.RED, fontsize=11, fontweight="bold")
+ax.text(2003, 30, "Our basket", color=cs.RED, fontsize=11, fontweight="bold")
 cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-6, weight="normal", size=9)
 cs.label_end(ax, latest, afbf[latest], "Farm Bureau\nsurvey", cs.GRAY, dy=-1.5)
 cs.unit_on_top(ax, prefix="$")
-cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019, in step with prices overall",
-          "Cost of a dinner for 10 at October prices, as paid and in 2026 dollars",
+cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019",
+          "Cost of a dinner for 10 at October prices, as paid",
           SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png")
 
 # 2. Indexes
