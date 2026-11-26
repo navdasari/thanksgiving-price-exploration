@@ -4,12 +4,34 @@ The cost of a fixed Thanksgiving dinner for 10, priced every October from 1995 t
 using BLS average retail prices (downloaded from FRED), compared with the American Farm
 Bureau's annual survey and with CPI.
 
+## Summary
+- **The cost-of-living squeeze is real, and it falls hardest at the bottom.** Comparing
+  2017-19 with 2023-25 averages, essentials (housing, utilities, groceries, health care,
+  child care and other household services, vehicle insurance) rose as a share of spending
+  for every household group: +3.7 points for the lowest income fifth and +4.0 for the
+  second, vs +0.7 for the top fifth. For renters, under-35s and the middle three income
+  fifths, 2025 is the highest share since at least 1995.
+- **The poorest households gained nothing.** Before-tax income left after essentials is
+  flat at about -$5,000 a year for the lowest fifth (in 2025 dollars), while the top
+  fifth gained about $14,500. Households aged 65-74 lost about $2,100.
+- **Minimum-wage workers have lost ground.** The federal minimum has been $7.25 since July
+  2009 and now buys 64% of what it did then. The dinner takes 7.7 hours of minimum-wage
+  work in 2026, vs 6.4 in 2019, the 4th-highest in 32 years (3rd-highest if turkey is
+  estimated from chicken prices).
+- **Thanksgiving dinner itself is not the driver.** Measured against income, it is at or
+  near its most affordable since 1995 for almost every group, including the lowest fifth,
+  mainly because turkey is cheaper than in 2022-24. Workers at the 10th percentile of
+  full-time pay have seen wages outpace prices since 2021 (+30.5% vs +28.5%).
+- **Not visible in annual averages:** in November 2025 the government shutdown delayed or
+  cut SNAP benefits for millions of households in the weeks before Thanksgiving.
+
 Run it with:
 
     pip install pandas numpy matplotlib
     python build_index.py
     python affordability.py   # run after build_index.py
     python by_income.py       # run after build_index.py
+    python deep_dive.py       # run after build_index.py
 
 Outputs go to `output/`: summary tables (CSV), three charts, and a text report.
 
@@ -17,7 +39,8 @@ Outputs go to `output/`: summary tables (CSV), three charts, and a text report.
 - **Turkey:** BLS stopped publishing whole frozen turkey prices in Feb 2020. From 2020 on,
   the 2019 BLS price is carried forward with the Farm Bureau's year-to-year turkey price
   changes. A version using whole-chicken prices instead is kept for comparison.
-- **October 2025:** not published (government shutdown); the Sep/Nov average is used.
+- **October 2013 (turkey) and October 2025 (all items):** not published because of
+  government shutdowns; the Sep/Nov average is used.
 - **Butter, 2012–2018:** no BLS price exists; the gap is filled with the dairy CPI.
 - Raw FRED downloads are in `data/`.
 
@@ -47,3 +70,30 @@ Findings:
   since 1995, for every quintile, mainly because turkey was cheap in 2025.
 - The gap between groups is large: for the lowest 20%, the dinner for 10 costs about 17%
   of a week's non-essential spending, compared with about 3% for the highest 20%.
+
+## Who is squeezed? (`deep_dive.py`)
+Tests the averages behind the story across 14 household groups (income fifths, renters vs
+homeowners, single parents, married couples with young or school-age children, and four
+age groups), using the Consumer Expenditure Survey, 1995-2025.
+
+Assumptions tested:
+- **Definition of essentials.** Narrow (shelter, utilities, food at home, health care) vs
+  broad (adds household operations, which includes child care, and vehicle insurance).
+  Rankings barely change.
+- **Spending vs income as the budget.** Essentials hit record shares of *spending* for
+  most groups, but not of *income*, except for under-25s. Income ranks are also checked
+  within 2004-2025 and 2013-2025, because the survey changed how it measures income in
+  2004 and 2013.
+- **Single-year noise.** Changes use 3-year averages (2017-19 vs 2023-25); small groups
+  have spikes in single years (e.g. young married families in 2019).
+- **The turkey estimate.** Dinner measures are rerun with turkey estimated from chicken
+  prices. The low-wage conclusions hold; the "most affordable ever" result for the lowest
+  income fifth weakens to 4th-most-affordable of 31 years.
+
+Limitations: group averages still hide variation within groups; the survey misses people
+without stable housing; gasoline is left out of essentials (FRED's series is broken from
+2023); everyone is assumed to pay national average prices; and the lowest fifth reports
+spending more than its income, so its income-based measures are rough.
+
+Financial-stress context: the personal saving rate is 4.1% (Oct 2026) vs 7.3% in 2019;
+credit card delinquency is 2.85%, above 2019 (2.58%) but below its 1995-2019 average (3.86%).

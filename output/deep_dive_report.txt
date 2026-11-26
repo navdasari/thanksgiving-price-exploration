@@ -1,0 +1,122 @@
+== A-C. Essentials share, 2019 vs 2025; rank of 2025 among 1995-2025 (1 = highest burden) ==
+                               narrow%spend 2019  narrow%spend 2025 narrow%spend rank  broad%spend 2019  broad%spend 2025 broad%spend rank  broad%income 2019  broad%income 2025 broad%income rank
+group                                                                                                                                                                                             
+Income: lowest 20%                          52.9               55.5              3/31              57.7              61.0             3/31              137.6              127.7             12/31
+Income: second 20%                          48.8               52.7              1/31              54.2              58.3             1/31               66.9               65.1             19/31
+Income: middle 20%                          44.4               47.1              1/31              49.6              52.4             1/31               46.4               46.0              9/31
+Income: fourth 20%                          40.7               42.4              1/31              45.6              47.7             1/31               34.8               34.8             12/31
+Income: highest 20%                         35.3               36.4              3/31              40.0              41.0             2/31               22.2               22.9             22/31
+Renters                                     47.0               49.9              1/31              51.5              54.7             1/31               46.1               44.3             16/31
+Homeowners                                  39.3               41.1              2/31              44.4              46.3             2/31               32.0               33.2             17/31
+Single parents                              42.8               44.7             11/31              48.3              51.0             6/31               50.8               50.7             25/31
+Married, oldest child under 6               39.4               41.2              2/31              48.7              50.8             2/31               25.9               31.3             29/31
+Married, oldest child 6-17                  38.1               37.9             20/31              43.1              42.5            16/31               31.3               29.9             29/31
+Age under 25                                38.0               42.9              1/31              42.5              47.2             1/31               43.8               48.9              1/31
+Age 25-34                                   40.8               43.7              1/31              46.5              48.7             1/31               34.9               33.0             31/31
+Age 65-74                                   46.7               47.3              4/31              51.5              52.6             2/31               43.0               46.6             11/31
+Age 75+                                     52.2               53.5              6/31              58.0              60.0             3/31               60.4               59.8             14/31
+
+== D. Before-tax income left after broad essentials, 2025 dollars, 3-year averages ==
+                               left$ 2017-19  left$ 2023-25   change
+group                                                               
+Income: lowest 20%                   -4956.0        -4977.0    -21.0
+Income: second 20%                   12939.0        15015.0   2076.0
+Income: middle 20%                   37669.0        40992.0   3323.0
+Income: fourth 20%                   75178.0        81571.0   6393.0
+Income: highest 20%                 201411.0       215902.0  14491.0
+Renters                              34791.0        38127.0   3337.0
+Homeowners                           81640.0        86820.0   5179.0
+Single parents                       28345.0        30097.0   1752.0
+Married, oldest child under 6       107068.0       114788.0   7720.0
+Married, oldest child 6-17          105450.0       126481.0  21031.0
+Age under 25                         24260.0        30036.0   5777.0
+Age 25-34                            60846.0        71272.0  10426.0
+Age 65-74                            43734.0        41613.0  -2121.0
+Age 75+                              18593.0        23118.0   4525.0
+
+== Essentials incl. child care, % of spending, 3-year averages ==
+                               broad%spend 2017-19  broad%spend 2023-25  change
+group                                                                          
+Income: lowest 20%                            57.1                 60.8     3.7
+Income: second 20%                            53.1                 57.1     4.0
+Income: middle 20%                            49.0                 51.8     2.8
+Income: fourth 20%                            45.5                 46.7     1.2
+Income: highest 20%                           39.4                 40.1     0.7
+Renters                                       50.7                 53.5     2.8
+Homeowners                                    44.0                 45.6     1.6
+Single parents                                48.1                 50.3     2.2
+Married, oldest child under 6                 47.8                 48.7     0.9
+Married, oldest child 6-17                    42.7                 43.0     0.2
+Age under 25                                  43.3                 45.9     2.5
+Age 25-34                                     45.7                 47.3     1.6
+Age 65-74                                     49.6                 52.2     2.6
+Age 75+                                       57.3                 60.0     2.6
+
+== Dinner as % of a week's before-tax income (rank_low: 1 = most affordable of 31 years) ==
+                               dinner%wk_inc 2019  dinner%wk_inc 2022  dinner%wk_inc 2025  dinner%wk_inc rank_low
+group                                                                                                            
+Income: lowest 20%                           20.2                23.4                15.8                       1
+Income: second 20%                            7.4                 8.9                 6.2                       1
+Income: middle 20%                            4.3                 5.1                 3.6                       1
+Income: fourth 20%                            2.6                 3.1                 2.3                       1
+Income: highest 20%                           1.1                 1.4                 1.0                       1
+Renters                                       4.7                 5.6                 3.9                       1
+Homeowners                                    2.4                 3.0                 2.2                       1
+Single parents                                5.3                 6.2                 4.2                       1
+Married, oldest child under 6                 1.6                 2.3                 1.6                       1
+Married, oldest child 6-17                    1.9                 2.2                 1.6                       1
+Age under 25                                  6.4                 6.9                 5.5                       3
+Age 25-34                                     3.2                 3.7                 2.5                       1
+Age 65-74                                     3.7                 4.9                 3.7                       1
+Age 75+                                       5.8                 6.7                 4.9                       1
+
+== E. Low-wage workers ==
+      dinner  federal_min_wage  decile1_weekly  hours_at_federal_min  pct_of_decile1_week
+year                                                                                     
+1995   29.02              4.25             NaN                  6.83                  NaN
+2000   31.58              5.15           278.0                  6.13                11.36
+2005   34.90              5.15           306.0                  6.78                11.41
+2009   42.73              7.25           346.0                  5.89                12.35
+2010   46.81              7.25           351.0                  6.46                13.34
+2015   47.05              7.25           384.0                  6.49                12.25
+2019   46.66              7.25           461.0                  6.44                10.12
+2021   51.81              7.25           510.0                  7.15                10.16
+2022   63.92              7.25           560.0                  8.82                11.41
+2023   60.92              7.25           587.0                  8.40                10.38
+2024   60.89              7.25           607.0                  8.40                10.03
+2025   55.13              7.25           616.0                  7.60                 8.95
+2026   56.01              7.25           634.0                  7.73                 8.83
+hours at federal minimum, 2026 rank (1 = most hours): 4 of 32
+
+== F. Since Jan 2021 ==
+  CPI all items:              +28.5%  (to Oct 2026)
+  Rent of primary residence:  +31.0%
+  10th-pct full-time pay:     +30.5%  (to Jul 2026)
+  Federal minimum wage:       +0.0%  ($7.25 since July 2009)
+  Since July 2009, CPI is up 57%, so $7.25 buys 64% of what it did
+
+== G. Financial stress ==
+  Personal saving rate: 2019 avg 7.3%, latest 4.1% (Oct 2026), 1995-2019 avg 5.3%
+  Credit card delinquency: 2019 avg 2.58%, latest 2.85% (Apr 2026), 1995-2019 avg 3.86%, 2021 low 1.53%
+
+== H1. Rank of 2025 (1 = highest burden) for essentials as % of before-tax income, by window ==
+                              1995-2025 2004-2025 2013-2025   2013   2019   2025
+Income: lowest 20%                12/31     12/22     11/13  133.6  137.6  127.7
+Income: second 20%                19/31     13/22     13/13   66.8   66.9   65.1
+Income: middle 20%                 9/31      8/22      8/13   45.8   46.4   46.0
+Income: fourth 20%                12/31     10/22      7/13   35.8   34.8   34.8
+Income: highest 20%               22/31     13/22      5/13   24.5   22.2   22.9
+Renters                           16/31     16/22     13/13   47.7   46.1   44.3
+Homeowners                        17/31      9/22      5/13   34.0   32.0   33.2
+Single parents                    25/31     16/22     11/13   55.6   50.8   50.7
+Married, oldest child under 6     29/31     20/22     11/13   35.6   25.9   31.3
+Married, oldest child 6-17        29/31     20/22     11/13   32.7   31.3   29.9
+Age under 25                       1/31      1/22      1/13   47.9   43.8   48.9
+Age 25-34                         31/31     22/22     13/13   37.2   34.9   33.0
+Age 65-74                         11/31      4/22      4/13   43.3   43.0   46.6
+Age 75+                           14/31     11/22     11/13   57.7   60.4   59.8
+
+== H2. Dinner measures with turkey proxied by chicken instead of Farm Bureau turkey prices ==
+  Lowest 20%, dinner % of week's income: 2019 20.2, 2022 23.5, 2025 19.6; 2025 rank (1 = most affordable) 4/31
+  Hours at federal minimum: 2019 6.44, 2026 9.08; 2026 rank (1 = most hours) 3/32
+  % of 10th-pct weekly pay: 2019 10.1, 2026 10.4; 2026 rank (1 = most affordable) 3/27

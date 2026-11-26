@@ -6,7 +6,8 @@ Thanksgiving (November data comes out in mid-December).
 Data patches (flagged in the output):
   * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. After Oct 2019 the
     price follows the Farm Bureau turkey price (chicken-based proxy kept for comparison).
-  * October 2025: not published (government shutdown); Sep/Nov average used.
+  * October 2013 (turkey) and October 2025 (all items): not published because of
+    government shutdowns; the Sep/Nov average is used.
   * Butter: no BLS butter average price exists from May 2012 to Mar 2018. The gap
     is filled with the dairy CPI, scaled so it matches both ends of the gap.
 """
@@ -70,12 +71,14 @@ butter = pd.concat([b_old, gap * np.exp((1 - w) * np.log(r0) + w * np.log(r1)), 
 butter_flag = pd.Series((butter.index > g0) & (butter.index < g1), index=butter.index)
 
 def fill_oct_2025(s):
-    """BLS published no October 2025 data (government shutdown): use the Sep/Nov average."""
+    """Fill Octobers BLS never published because of government shutdowns (2013, 2025)
+    with the Sep/Nov average, or whichever of the two exists."""
     s = s.copy()
-    oct25, sep25, nov25 = (pd.Timestamp(f"2025-{m}-01") for m in ("10", "09", "11"))
-    neighbors = s.reindex([sep25, nov25]).dropna()
-    if pd.isna(s.get(oct25)) and len(neighbors):
-        s[oct25] = neighbors.mean()  # Sep/Nov average, or whichever one exists
+    for yr in (2013, 2025):
+        oct_, sep_, nov_ = (pd.Timestamp(f"{yr}-{m}-01") for m in ("10", "09", "11"))
+        neighbors = s.reindex([sep_, nov_]).dropna()
+        if pd.isna(s.get(oct_)) and len(neighbors):
+            s[oct_] = neighbors.mean()
     return s.sort_index()
 
 
