@@ -87,7 +87,7 @@ cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], suffix="%")
 fig.subplots_adjust(right=0.87)
 cs.finish(fig, "Essentials take more of every budget, leaving less room for the dinner",
           "By income fifth, 1995-2025. Essentials: shelter, utilities, groceries, health care.",
-          "BLS Consumer Expenditure Survey via FRED", OUT / "6_by_income.png")
+          "BLS Consumer Expenditure Survey via FRED", OUT / "5_by_income.png")
 
 # ---------- Chart 4: essentials as a share of income, bottom vs top half ----------
 # Bottom 50% = lowest two fifths + half of the middle fifth; top 50% = the rest.

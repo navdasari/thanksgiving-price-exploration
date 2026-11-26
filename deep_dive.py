@@ -208,7 +208,7 @@ fig.legend(*axes[0].get_legend_handles_labels(), ncol=4, loc="upper left", bbox_
 fig.subplots_adjust(top=0.7, right=0.97)
 cs.finish(fig, "The squeeze is widest at the bottom",
           "Household types, 1995-2025. Essentials: shelter, utilities, groceries, health care, child care, vehicle insurance.",
-          "BLS Consumer Expenditure Survey via FRED", OUT / "7_who_is_squeezed.png",
+          "BLS Consumer Expenditure Survey via FRED", OUT / "6_who_is_squeezed.png",
           note="Right panel omits the top fifth and married couples with young children, whose incomes are far higher.")
 
 w = wage.dropna(subset=["hours_at_federal_min"])
@@ -226,4 +226,4 @@ cs.unit_on_top(axes[0], suffix=" hrs"); cs.unit_on_top(axes[1], suffix="%")
 fig.subplots_adjust(right=0.97)
 cs.finish(fig, "For minimum-wage workers, the dinner costs more work",
           "Thanksgiving dinner for 10, 1995-2026",
-          "BLS via FRED, U.S. Department of Labor", OUT / "8_low_wage.png")
+          "BLS via FRED, U.S. Department of Labor", OUT / "7_low_wage.png")

@@ -6,30 +6,25 @@ household budgets. The turkey price BLS stopped publishing in 2020 is rebuilt wi
 backtested time-series and machine-learning models.
 
 ## Summary
-- **The cost-of-living squeeze is real, and it falls hardest at the bottom.** Comparing
-  2017-19 with 2023-25 averages, essentials (housing, utilities, groceries, health care,
-  child care and other household services, vehicle insurance) rose as a share of spending
-  for every household group: +3.7 points for the lowest income fifth and +4.0 for the
-  second, vs +0.7 for the top fifth. For renters, under-35s and the middle three income
-  fifths, 2025 is the highest share since at least 1995.
-- **The poorest households gained nothing.** Before-tax income left after essentials is
-  flat at about -$5,000 a year for the lowest fifth (in 2025 dollars), while the top
-  fifth gained about $14,500. Households aged 65-74 lost about $2,100.
-- **The dinner's price has kept pace with inflation, not beaten it.** It costs $61.31 in
-  2026, up 31% from 2019, the same as prices overall (+31%) and a little less than
-  groceries (+33%). In 2026 dollars it is back at its 2019 level, 6th-cheapest of 32 years.
-  It fell $1.30 from 2025, mostly because eggs and butter got cheaper.
-- **After essentials, the dinner takes a bigger bite than in 2019 for every income
-  fifth.** For the lowest fifth it costs 19.3% of a week's non-essential spending, vs
-  18.0% in 2019; for the second fifth, 13.4% vs 11.7%. Against total income it looks
-  cheaper, because incomes grew; what is left after essentials did not keep up.
-- **Minimum-wage workers have lost ground.** The federal minimum has been $7.25 since July
-  2009 and now buys 64% of what it did then. The dinner takes 8.5 hours of minimum-wage
-  work in 2026, vs 6.4 in 2019, the 3rd-highest in 32 years. Workers at the 10th
-  percentile of full-time pay did better: wages outpaced prices since 2021 (+30.5% vs
-  +28.5%), and the dinner takes 9.7% of their weekly pay vs 10.1% in 2019.
-- **Not visible in annual averages:** in November 2025 the government shutdown delayed or
-  cut SNAP benefits for millions of households in the weeks before Thanksgiving.
+- **The cost-of-living squeeze is real and hits the bottom hardest.** From 2017-19 to
+  2023-25, essentials (housing, utilities, groceries, health care, child care, vehicle
+  insurance) rose as a share of spending for every household group: +3.7 points for the
+  lowest income fifth and +4.0 for the second, vs +0.7 for the top. For renters, under-35s
+  and the middle three fifths, 2025 is the highest share since at least 1995.
+- **The poorest gained nothing.** Before-tax income left after essentials stayed at about
+  -$5,000 a year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
+- **The dinner kept pace with inflation.** It costs $61.31 in 2026, up 31% from 2019,
+  matching overall prices (+31%) and just below groceries (+33%). It fell $1.30 from 2025,
+  mostly on cheaper eggs and butter.
+- **After essentials, the dinner takes a bigger bite for every income fifth.** For the
+  lowest fifth it is 19.3% of a week's non-essential spending, vs 18.0% in 2019; for the
+  second, 13.4% vs 11.7%.
+- **Minimum-wage workers lost ground.** At $7.25 since 2009, the federal minimum buys 64%
+  of what it did. The dinner takes 8.5 hours of work, vs 6.4 in 2019, the 3rd-highest in
+  32 years. Full-time workers at the 10th percentile did better: their pay has outpaced
+  prices since 2021.
+- **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
+  millions of households just before Thanksgiving.
 
 ## Running it
 
@@ -43,11 +38,11 @@ font if installed, otherwise system fonts).
 
 | Script | What it does | Main outputs |
 |---|---|---|
-| `turkey_model.py` | Rebuilds the retail turkey price after Feb 2020 | `turkey_reconstruction.csv`, `turkey_model_metrics.csv`, charts 9-10 |
+| `turkey_model.py` | Rebuilds the retail turkey price after Feb 2020 | `turkey_reconstruction.csv`, `turkey_model_metrics.csv`, charts 8-9 |
 | `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
 | `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
-| `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4 and 6 |
-| `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 7-8 |
+| `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4-5 |
+| `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
 
 ## Rebuilding the turkey price (`turkey_model.py`)
 Turkey is over half the basket's cost, and BLS stopped publishing its average retail price
