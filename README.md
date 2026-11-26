@@ -22,9 +22,11 @@ backtested time-series and machine-learning models.
 - **After essentials, the dinner takes a bigger bite for the bottom four income fifths.**
   For the lowest fifth it is 29.8% of a week's non-essential spending, vs 28.9% in 2019;
   for the second, 20.7% vs 18.8%. For the top fifth it is unchanged at 5.0%.
-- **Minimum-wage workers lost ground.** At $7.25 since 2009, the federal minimum buys 64%
-  of what it did. The dinner takes 13.3 hours of work, vs 10.4 in 2019, the 3rd-highest in
-  32 years.
+- **NYC's minimum wage outpaced the dinner; the federal one did not.** At New York City's
+  $17 minimum (employers with 11+ workers), the dinner at NYC prices takes 6.3 hours of
+  work, vs 9-12 hours before the city's raises began in 2017 (chart 7). At the federal
+  $7.25, unchanged since 2009, the national-price dinner takes 13.3 hours, the 3rd-highest
+  in 32 years.
 - **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
   millions of households just before Thanksgiving.
 
