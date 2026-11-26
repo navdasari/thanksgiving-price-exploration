@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 STEPS = [
-    ("turkey_model.py", "turkey_model_report.txt"),
+    ("turkey_nowcast_ml_ensemble.py", "turkey_nowcast_ml_ensemble_report.txt"),
     ("build_index.py", "report.txt"),
     ("affordability.py", "affordability_report.txt"),
     ("by_income.py", "by_income_report.txt"),

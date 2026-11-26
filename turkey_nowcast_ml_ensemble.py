@@ -45,7 +45,7 @@ Uncertainty bands come from the backtest errors at each horizon (empirical 10th-
 percentiles), so they reflect how wrong this approach has actually been.
 
 Outputs (in output/): turkey_reconstruction.csv, turkey_backtest_errors.csv,
-turkey_model_metrics.csv, 8_turkey_backtest.png, 9_turkey_reconstruction.png.
+turkey_model_metrics.csv, 8_nowcast_rolling_origin_backtests.png, 9_turkey_price_nowcast_80pct_interval.png.
 """
 from pathlib import Path
 import warnings
@@ -294,7 +294,7 @@ for ax in axes.flat:
 axes[0, 0].legend(loc="upper left", fontsize=9)
 cs.finish(fig, "In backtests, the combined model misses October prices by about 8%",
           "Retail whole frozen turkey, $/lb. Each panel predicts years it never saw, from predictors only.",
-          "BLS via FRED; author's models", OUT / "8_turkey_backtest.png")
+          "BLS via FRED; author's models", OUT / "8_nowcast_rolling_origin_backtests.png")
 
 fig, ax = cs.figure()
 m = rec.main_estimate
@@ -315,4 +315,4 @@ fig.subplots_adjust(right=0.82)
 cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
 cs.finish(fig, "Rebuilding the turkey price BLS stopped publishing",
           "Retail whole frozen turkey, $/lb, monthly. Farm Bureau points are its holiday price, scaled to BLS's 2019 level.",
-          "BLS, American Farm Bureau Federation; author's models", OUT / "9_turkey_reconstruction.png")
+          "BLS, American Farm Bureau Federation; author's models", OUT / "9_turkey_price_nowcast_80pct_interval.png")

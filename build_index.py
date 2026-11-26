@@ -5,7 +5,7 @@ Thanksgiving (November data comes out in mid-December).
 
 Data patches (flagged in the output):
   * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. From March 2020 on,
-    the price is the model reconstruction from turkey_model.py (run it first). Two
+    the price is the model reconstruction from turkey_nowcast_ml_ensemble.py (run it first). Two
     comparison versions are kept: the 2019 BLS price carried forward with the Farm
     Bureau's holiday turkey price, and the whole-chicken price times the Feb 2020
     turkey/chicken ratio.
@@ -48,7 +48,7 @@ BASKET = {
 }
 
 # ---------------- Patch turkey ----------------
-# Main version: model reconstruction of the BLS series (turkey_model.py).
+# Main version: model reconstruction of the BLS series (turkey_nowcast_ml_ensemble.py).
 # Comparison versions: (a) the last BLS October price (2019) carried forward with the
 # year-to-year change in the Farm Bureau's 16-lb holiday turkey price; (b) whole-chicken
 # price times the Feb 2020 turkey/chicken ratio.
