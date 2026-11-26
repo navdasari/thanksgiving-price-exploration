@@ -3,6 +3,9 @@
 Prices are taken in October of each year, the last month BLS publishes before
 Thanksgiving (November data comes out in mid-December).
 
+Menu: the Farm Bureau's expanded Thanksgiving menu for 10 (see BASKET). Items BLS does
+not price start from the Farm Bureau's 2026 survey price and move with a CPI component.
+
 Data patches (flagged in the output):
   * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. From March 2020 on,
     the price is the model reconstruction from turkey_price_ml_modeling.py (run it first). Two
@@ -33,18 +36,47 @@ def load(sid):
     return df.set_index("observation_date")[sid].astype(float)
 
 
-# ---------------- Basket: classic dinner for 10 ----------------
-# item: (FRED id, quantity, unit)
+# ---------------- Basket: Thanksgiving dinner for 10 ----------------
+# The menu follows the American Farm Bureau Federation's "expanded" Thanksgiving menu
+# (its classic menu plus boneless ham, russet potatoes and frozen green beans).
+# item: (source, quantity, unit). Source is a FRED id for a BLS average price, a patched
+# series (TURKEY, BUTTER), or ANCHOR for items BLS does not price (see ANCHORS).
 BASKET = {
-    "Turkey":          ("TURKEY",        16.0, "lb"),
-    "Potatoes":        ("APU0000712112",  5.0, "lb"),
-    "Bread (stuffing)": ("APU0000702111", 1.0, "lb"),
-    "Flour (rolls, crust)": ("APU0000701111", 3.0, "lb"),
-    "Butter":          ("BUTTER",         1.0, "lb"),
-    "Eggs":            ("APU0000708111",  1.0, "doz"),
-    "Milk":            ("APU0000709112",  1.0, "gal"),
-    "Sugar":           ("APU0000715211",  2.0, "lb"),
-    "Ice cream (pie)": ("APU0000710411",  1.0, "half gal"),
+    "Turkey":            ("TURKEY",        16.0, "lb"),
+    "Ham":               ("APU0000704312",  3.0, "lb, boneless"),
+    "Russet potatoes":   ("APU0000712112",  5.0, "lb"),
+    "Sweet potatoes":    ("ANCHOR",         1.0, "3 lb"),
+    "Stuffing mix":      ("ANCHOR",         1.0, "14 oz"),
+    "Dinner rolls":      ("ANCHOR",         1.0, "dozen"),
+    "Cranberries":       ("ANCHOR",         1.0, "12 oz bag"),
+    "Frozen peas":       ("ANCHOR",         1.0, "1 lb"),
+    "Green beans":       ("ANCHOR",         1.0, "1 lb frozen"),
+    "Veggie tray":       ("ANCHOR",         1.0, "1 lb carrots & celery"),
+    "Pumpkin pie mix":   ("ANCHOR",         1.0, "30 oz can"),
+    "Pie crusts":        ("ANCHOR",         1.0, "2 frozen"),
+    "Whipping cream":    ("ANCHOR",         1.0, "half pint"),
+    "Milk":              ("APU0000709112",  1.0, "gal"),
+    "Butter":            ("BUTTER",         1.0, "lb"),
+    "Eggs":              ("APU0000708111",  1.0, "doz"),
+    "Flour":             ("APU0000701111",  1.0, "lb"),
+    "Sugar":             ("APU0000715211",  1.0, "lb"),
+}
+# Items BLS does not price: the Farm Bureau's 2026 survey price, moved back in time with
+# the closest CPI component on FRED (October values). FRED only carries the broad
+# components, so produce, frozen and canned items all follow "fruits and vegetables".
+# Green beans: the Farm Bureau does not publish its price, so the frozen-pea price is used.
+ANCHOR_YEAR = 2026
+ANCHORS = {
+    "Sweet potatoes":  (4.20, "CUUR0000SAF113"),
+    "Stuffing mix":    (3.91, "CUUR0000SAF111"),
+    "Dinner rolls":    (3.81, "CUUR0000SAF111"),
+    "Cranberries":     (2.48, "CUUR0000SAF113"),
+    "Frozen peas":     (1.99, "CUUR0000SAF113"),
+    "Green beans":     (1.99, "CUUR0000SAF113"),
+    "Veggie tray":     (1.31, "CUUR0000SAF113"),
+    "Pumpkin pie mix": (4.24, "CUUR0000SAF113"),
+    "Pie crusts":      (3.28, "CUUR0000SAF111"),
+    "Whipping cream":  (1.84, "CUUR0000SEFJ"),
 }
 
 # ---------------- Patch turkey ----------------
@@ -87,10 +119,20 @@ def fill_oct_2025(s):
     return s.sort_index()
 
 
+def anchored(item):
+    """Farm Bureau anchor price, moved through time with its CPI component."""
+    price, cpi_id = ANCHORS[item]
+    cpi_s = fill_oct_2025(load(cpi_id))
+    return price * cpi_s / cpi_s[pd.Timestamp(f"{ANCHOR_YEAR}-10-01")]
+
+
 def build_prices(turkey_series):
     series = {"TURKEY": turkey_series, "BUTTER": butter}
-    df = pd.DataFrame({item: fill_oct_2025(series[sid]) if sid in series else fill_oct_2025(load(sid))
-                       for item, (sid, _, _) in BASKET.items()})
+    def get(item, sid):
+        if sid == "ANCHOR":
+            return anchored(item)
+        return fill_oct_2025(series[sid]) if sid in series else fill_oct_2025(load(sid))
+    df = pd.DataFrame({item: get(item, sid) for item, (sid, _, _) in BASKET.items()})
     df = df[df.index.month == MONTH]
     df.index = df.index.year
     return df.dropna()  # milk starts in 1995, so the index starts in 1995
@@ -163,55 +205,72 @@ import chart_style as cs
 SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 
 # 1. Cost as paid, with the Farm Bureau benchmark (comparison with overall prices is chart 2)
+FLOOR = 0
 fig, ax = cs.figure()
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
-ax.text(2019.7, 31.5, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
-ax.set_ylim(25, 70)
-cs.soft_fill(ax, total.index, total, cs.RED, floor=25)
+ax.text(2019.7, 8, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
+ax.set_ylim(FLOOR, 110)
+cs.soft_fill(ax, total.index, total, cs.RED, floor=FLOOR)
 ax.plot(total.index, total, color=cs.RED)
 cs.end_dot(ax, latest, total[latest], cs.RED)
 ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
 ax.plot(afbf.index, afbf, color=cs.DARK, lw=1.8, marker="o", ms=4.5, markeredgecolor=cs.BG)
 ax.set_xlim(1994, latest + 1)
-ax.set_ylim(25, 70)
-cs.baseline(ax, 25)
-ax.text(2003, 30, "Our basket", color=cs.RED, fontsize=11, fontweight="bold")
-cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-6, weight="normal", size=9.5, dot=False)
-cs.label_end(ax, latest, afbf[latest], "Farm Bureau\nsurvey", cs.DARK, dy=-1.5, dot=False)
+cs.baseline(ax, FLOOR)
+ax.text(2002, total[2002] - 10, "Our basket (full menu)", color=cs.RED, fontsize=11, fontweight="bold")
+ax.text(2012.3, afbf[2015] - 15, "Farm Bureau\nclassic menu", color=cs.DARK, fontsize=10, fontweight="semibold")
+cs.label_end(ax, latest, total[latest], f"${total[latest]:.0f}", cs.RED, dy=3, size=11, dot=False)
+cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-3, weight="normal", size=9.5, dot=False)
+cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, dot=False)
 cs.unit_on_top(ax, prefix="$")
-cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019",
-          "Cost of a dinner for 10 at October prices, as paid",
+pct19 = 100 * (total[latest] / total[2019] - 1)
+cs.finish(fig, f"Thanksgiving dinner for 10 costs ${total[latest]:.0f}, {pct19:.0f}% more than in 2019",
+          "Cost at October prices, as paid. Full menu: turkey, ham, sides, rolls, pumpkin pie and baking staples.",
           SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png")
 
 # 2. Indexes
 fig, ax = cs.figure()
-lines = [(cpi_food_idx, "Groceries", cs.GREEN, 7), (cpi_all_idx, "All prices", cs.BLUE, -2.5),
-         (laspeyres, "Dinner", cs.RED, 2.5), (geometric, "Dinner, w/ subst.", cs.GOLD, -8)]
+lines = [(cpi_food_idx, "Groceries", cs.GREEN, 8), (cpi_all_idx, "All prices", cs.BLUE, 3),
+         (laspeyres, "Dinner", cs.RED, -2.5), (geometric, "Dinner, w/ subst.", cs.GOLD, -8.5)]
 for s, lab, c, dy in lines:
     ax.plot(s.index, s, color=c, lw=2.2 if c == cs.GOLD else 3)
     cs.label_end(ax, latest, s[latest], lab, c, dy=dy, size=9.5)
 ax.set_xlim(1994, latest + 1)
 cs.baseline(ax, 100)
 cs.unit_on_top(ax)
-cs.finish(fig, "Since 2019, the dinner's price has risen in step with prices overall",
+gap = laspeyres[latest] - cpi_all_idx[latest]
+verdict = ("in step with" if abs(gap) < 1.5 else ("a bit less than" if gap < 0 else "a bit more than"))
+cs.finish(fig, f"Since 2019, the dinner's price has risen {verdict} prices overall",
           "Price indexes, October 2019 = 100. Groceries and all prices are CPI.",
           "BLS via FRED, American Farm Bureau Federation", OUT / "2_indexes.png")
 
 # 3. YoY contributions
 # Recent years, all nine items
 recent = contrib.loc[2015:]
-# All nine items, each colored to suggest the food itself (turkey keeps the accent red)
-groups = {"Turkey": (["Turkey"], "#C8553D"),       # roast-turkey red
-          "Potatoes": (["Potatoes"], "#7A5A3A"),      # russet skin
-          "Butter": (["Butter"], "#F2CC4E"),          # butter yellow
-          "Milk": (["Milk"], "#BFD5E6"),              # milk-carton blue
-          "Eggs": (["Eggs"], "#F39B2E"),              # yolk orange
-          "Ice cream": (["Ice cream (pie)"], "#E79AB0"),  # strawberry
-          "Bread": (["Bread (stuffing)"], "#C98A4B"), # golden crust
-          "Flour": (["Flour (rolls, crust)"], "#E4D8C0"), # off-white flour
-          "Sugar": (["Sugar"], "#B4BAC2")}            # granulated, cool gray
-fig, ax = cs.figure()
-fig.subplots_adjust(top=0.70)
+# Every item, each colored to suggest the food itself (continuing items keep their colors)
+FOOD_COLORS = {
+    "Turkey": "#C8553D",          # roast-turkey red
+    "Ham": "#E8A2A2",             # ham pink
+    "Russet potatoes": "#7A5A3A", # russet skin
+    "Sweet potatoes": "#8C4A2F",  # sweet-potato skin
+    "Stuffing mix": "#A67B4F",    # toasted bread
+    "Dinner rolls": "#D9A86C",    # golden crust
+    "Cranberries": "#7B1E3A",     # deep cranberry
+    "Frozen peas": "#7FA650",     # pea green
+    "Green beans": "#4E7A3A",     # bean green
+    "Veggie tray": "#B5C98E",     # celery
+    "Pumpkin pie mix": "#E07A1F", # pumpkin
+    "Pie crusts": "#EAD2A8",      # pastry
+    "Whipping cream": "#CFC6B8",  # cream
+    "Milk": "#BFD5E6",            # milk-carton blue
+    "Butter": "#F2CC4E",          # butter yellow
+    "Eggs": "#F39B2E",            # yolk orange
+    "Flour": "#E4D8C0",           # off-white flour
+    "Sugar": "#B4BAC2",           # granulated, cool gray
+}
+groups = {name: ([name], FOOD_COLORS[name]) for name in BASKET}
+fig, ax = cs.figure(height=7.2)
+fig.subplots_adjust(top=0.64)
 pos = np.zeros(len(recent)); neg = np.zeros(len(recent))
 for name, (cols, c) in groups.items():
     v = recent[cols].sum(axis=1).values
@@ -221,7 +280,7 @@ for name, (cols, c) in groups.items():
 ax.scatter(recent.index, recent.sum(axis=1), color=cs.TEXT, s=46, zorder=4, label="Net change",
            edgecolor=cs.BG, linewidth=1.4)
 cs.baseline(ax, 0)
-ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.4)
+ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.2, fontsize=9.5)
 from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
 ax.set_xticklabels([f"'{y % 100:02d}" for y in recent.index])
