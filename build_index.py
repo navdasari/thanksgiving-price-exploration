@@ -5,7 +5,7 @@ Thanksgiving (November data comes out in mid-December).
 
 Data patches (flagged in the output):
   * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. From March 2020 on,
-    the price is the model reconstruction from turkey_nowcast_ml_ensemble.py (run it first). Two
+    the price is the model reconstruction from turkey_price_ml_modeling.py (run it first). Two
     comparison versions are kept: the 2019 BLS price carried forward with the Farm
     Bureau's holiday turkey price, and the whole-chicken price times the Feb 2020
     turkey/chicken ratio.
@@ -48,7 +48,7 @@ BASKET = {
 }
 
 # ---------------- Patch turkey ----------------
-# Main version: model reconstruction of the BLS series (turkey_nowcast_ml_ensemble.py).
+# Main version: model reconstruction of the BLS series (turkey_price_ml_modeling.py).
 # Comparison versions: (a) the last BLS October price (2019) carried forward with the
 # year-to-year change in the Farm Bureau's 16-lb holiday turkey price; (b) whole-chicken
 # price times the Feb 2020 turkey/chicken ratio.
@@ -62,7 +62,7 @@ bls_oct_2019 = turkey[pd.Timestamp("2019-10-01")]
 turkey_afbf = pd.concat([turkey, pd.Series(
     {pd.Timestamp(f"{y}-10-01"): bls_oct_2019 * v / AFBF_TURKEY[2019]
      for y, v in AFBF_TURKEY.items() if y > 2019})])
-rec = pd.read_csv(ROOT / "output" / "turkey_reconstruction.csv", parse_dates=["month"], index_col="month")
+rec = pd.read_csv(ROOT / "output" / "turkey_price_nowcast.csv", parse_dates=["month"], index_col="month")
 turkey_model = pd.concat([turkey, rec.loc[rec.index > last, "main_estimate"]])
 turkey_flag = pd.Series(turkey_model.index > last, index=turkey_model.index)
 

@@ -41,13 +41,13 @@ the same on any machine.
 
 | Script | What it does | Main outputs |
 |---|---|---|
-| `turkey_nowcast_ml_ensemble.py` | Nowcasts the discontinued retail turkey price (ML and time-series ensemble, backtested) | `turkey_reconstruction.csv`, `turkey_model_metrics.csv`, charts 8-9 |
+| `turkey_price_ml_modeling.py` | Nowcasts the discontinued retail turkey price (ML and time-series ensemble, backtested) | `turkey_price_nowcast.csv`, `turkey_price_model_metrics.csv`, charts 8-9 |
 | `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
 | `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
 | `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4-5 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
 
-## Nowcasting the turkey price: ML and time-series ensemble (`turkey_nowcast_ml_ensemble.py`)
+## Nowcasting the turkey price: ML and time-series ensemble (`turkey_price_ml_modeling.py`)
 Turkey is over half the basket's cost, and BLS stopped publishing its average retail price
 (whole frozen turkey, per lb) after February 2020. The script estimates it for March 2020
 to October 2026 from series that are still published, and tests that approach first.

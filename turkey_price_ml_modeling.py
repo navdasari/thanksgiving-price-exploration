@@ -44,8 +44,8 @@ also select it.
 Uncertainty bands come from the backtest errors at each horizon (empirical 10th-90th
 percentiles), so they reflect how wrong this approach has actually been.
 
-Outputs (in output/): turkey_reconstruction.csv, turkey_backtest_errors.csv,
-turkey_model_metrics.csv, 8_nowcast_rolling_origin_backtests.png, 9_turkey_price_nowcast_80pct_interval.png.
+Outputs (in output/): turkey_price_nowcast.csv, turkey_price_backtest_errors.csv,
+turkey_price_model_metrics.csv, 8_turkey_price_ml_backtest.png, 9_turkey_price_nowcasting.png.
 """
 from pathlib import Path
 import warnings
@@ -91,12 +91,12 @@ def fill_single_gaps(s):
 raw = {
     "turkey": load(DATA / "APU0000706311.csv"),
     "food_cpi": fill_single_gaps(load(DATA / "CUUR0000SAF11.csv")),
-    "ppi_proc": fill_single_gaps(load(DATA / "turkey_model" / "PCU3116153116157.csv")),
-    "ppi_slaughter": fill_single_gaps(load(DATA / "turkey_model" / "WPS014201.csv")),
+    "ppi_proc": fill_single_gaps(load(DATA / "turkey_price_predictors" / "PCU3116153116157.csv")),
+    "ppi_slaughter": fill_single_gaps(load(DATA / "turkey_price_predictors" / "WPS014201.csv")),
     "chicken": fill_single_gaps(load(DATA / "APU0000706111.csv")),
     "eggs": fill_single_gaps(load(DATA / "APU0000708111.csv")),
-    "corn": fill_single_gaps(load(DATA / "turkey_model" / "PMAIZMTUSDM.csv")),
-    "soymeal": fill_single_gaps(load(DATA / "turkey_model" / "PSMEAUSDM.csv")),
+    "corn": fill_single_gaps(load(DATA / "turkey_price_predictors" / "PMAIZMTUSDM.csv")),
+    "soymeal": fill_single_gaps(load(DATA / "turkey_price_predictors" / "PSMEAUSDM.csv")),
 }
 df = pd.DataFrame(raw)
 # Global feed prices are published with a lag; carry the last value forward at most 2 months
@@ -189,7 +189,7 @@ for origin in map(pd.Timestamp, ORIGINS):
                                   "horizon_months": h, "error_log": err.values}))
 bt = pd.concat(rows, ignore_index=True)
 bt["horizon_year"] = (bt.horizon_months - 1) // 12 + 1
-bt.to_csv(OUT / "turkey_backtest_errors.csv", index=False)
+bt.to_csv(OUT / "turkey_price_backtest_errors.csv", index=False)
 
 pct = lambda e: 100 * (np.exp(e) - 1)
 metrics = bt.groupby("model").apply(lambda g: pd.Series({
@@ -200,7 +200,7 @@ metrics = bt.groupby("model").apply(lambda g: pd.Series({
 }), include_groups=False).sort_values("mae_october_pct")
 by_h = bt[bt.date.dt.month == 10].groupby(["model", "horizon_year"]).error_log.apply(
     lambda e: 100 * e.abs().mean()).unstack().reindex(metrics.index)
-metrics.round(2).to_csv(OUT / "turkey_model_metrics.csv")
+metrics.round(2).to_csv(OUT / "turkey_price_model_metrics.csv")
 BEST = COMBINED
 
 
@@ -237,7 +237,7 @@ rec["band_high_p90"] = to_dollars(pd.Series(hi, index=gap))
 actual = df.turkey.loc[:LAST_ACTUAL].dropna()
 out = pd.concat([actual.rename("bls_actual"), rec], axis=1)
 out.index.name = "month"
-out.round(4).to_csv(OUT / "turkey_reconstruction.csv")
+out.round(4).to_csv(OUT / "turkey_price_nowcast.csv")
 
 # ---------------- Report ----------------
 pd.set_option("display.width", 200)
@@ -294,7 +294,7 @@ for ax in axes.flat:
 axes[0, 0].legend(loc="upper left", fontsize=9)
 cs.finish(fig, "In backtests, the combined model misses October prices by about 8%",
           "Retail whole frozen turkey, $/lb. Each panel predicts years it never saw, from predictors only.",
-          "BLS via FRED; author's models", OUT / "8_nowcast_rolling_origin_backtests.png")
+          "BLS via FRED; author's models", OUT / "8_turkey_price_ml_backtest.png")
 
 fig, ax = cs.figure()
 m = rec.main_estimate
@@ -315,4 +315,4 @@ fig.subplots_adjust(right=0.82)
 cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
 cs.finish(fig, "Rebuilding the turkey price BLS stopped publishing",
           "Retail whole frozen turkey, $/lb, monthly. Farm Bureau points are its holiday price, scaled to BLS's 2019 level.",
-          "BLS, American Farm Bureau Federation; author's models", OUT / "9_turkey_price_nowcast_80pct_interval.png")
+          "BLS, American Farm Bureau Federation; author's models", OUT / "9_turkey_price_nowcasting.png")
