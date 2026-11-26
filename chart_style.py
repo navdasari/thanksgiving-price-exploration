@@ -2,8 +2,7 @@
 headlines (Source Serif Pro) with sans-serif labels (Source Sans Pro), a thin harvest
 stripe across the top, dots at line ends and a small project mark in the footer.
 
-The fonts ship in fonts/ (SIL Open Font License) so the charts look the same anywhere.
-The item-contributions chart keeps the earlier style in chart_style_clean.py."""
+The fonts ship in fonts/ (SIL Open Font License) so the charts look the same anywhere."""
 from pathlib import Path
 
 import matplotlib.pyplot as plt

@@ -35,9 +35,7 @@ backtested time-series and machine-learning models.
 and saves each console report to `output/`. A full run takes under a minute and gives
 identical results each time. Charts use a Thanksgiving theme from `chart_style.py` (autumn
 palette, Source Serif Pro headlines, Source Sans Pro labels). The fonts are bundled in
-`fonts/` under the SIL Open Font License, so charts look the same on any machine. The
-item-contributions chart (chart 3) keeps the earlier plain style from
-`chart_style_clean.py`.
+`fonts/` under the SIL Open Font License, so charts look the same on any machine.
 
 | Script | What it does | Main outputs |
 |---|---|---|

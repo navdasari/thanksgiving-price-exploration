@@ -197,12 +197,11 @@ cs.finish(fig, "Since 2019, the dinner's price has risen in step with prices ove
           "Price indexes, October 2019 = 100. Groceries and all prices are CPI.",
           "BLS via FRED, American Farm Bureau Federation", OUT / "2_indexes.png")
 
-# 3. YoY contributions (kept in the earlier clean style: chart_style_clean.py)
-import chart_style_clean as csc
+# 3. YoY contributions
 # Recent years, all nine items
 recent = contrib.loc[2015:]
 # All nine items, each colored to suggest the food itself (turkey keeps the accent red)
-groups = {"Turkey": (["Turkey"], csc.RED),
+groups = {"Turkey": (["Turkey"], "#C8553D"),       # roast-turkey red
           "Potatoes": (["Potatoes"], "#7A5A3A"),      # russet skin
           "Butter": (["Butter"], "#F2CC4E"),          # butter yellow
           "Milk": (["Milk"], "#BFD5E6"),              # milk-carton blue
@@ -211,16 +210,17 @@ groups = {"Turkey": (["Turkey"], csc.RED),
           "Bread": (["Bread (stuffing)"], "#C98A4B"), # golden crust
           "Flour": (["Flour (rolls, crust)"], "#E4D8C0"), # off-white flour
           "Sugar": (["Sugar"], "#B4BAC2")}            # granulated, cool gray
-fig, ax = csc.figure()
-fig.subplots_adjust(top=0.72)
+fig, ax = cs.figure()
+fig.subplots_adjust(top=0.70)
 pos = np.zeros(len(recent)); neg = np.zeros(len(recent))
 for name, (cols, c) in groups.items():
     v = recent[cols].sum(axis=1).values
     ax.bar(recent.index, v, bottom=np.where(v >= 0, pos, neg), color=c, width=0.72, label=name, zorder=3,
-           edgecolor="white", linewidth=0.6)
+           edgecolor=cs.BG, linewidth=0.8)
     pos += np.where(v >= 0, v, 0); neg += np.where(v < 0, v, 0)
-ax.scatter(recent.index, recent.sum(axis=1), color=csc.TEXT, s=38, zorder=4, label="Net change")
-csc.baseline(ax, 0)
+ax.scatter(recent.index, recent.sum(axis=1), color=cs.TEXT, s=46, zorder=4, label="Net change",
+           edgecolor=cs.BG, linewidth=1.4)
+cs.baseline(ax, 0)
 ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.4)
 from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
@@ -229,9 +229,9 @@ ax.set_yticks([-5, 0, 5, 10])
 ax.set_ylim(-7.5, 13.5)
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
-csc.finish(fig, "Turkey drives most swings in the dinner's cost",
+cs.finish(fig, "Turkey drives most swings in the dinner's cost",
           "Change in the cost of a dinner for 10 vs. the previous October",
-          "BLS via FRED, American Farm Bureau Federation", OUT / "3_contributions.png")
+          "BLS via FRED; turkey since 2020 is a model estimate", OUT / "3_contributions.png")
 
 # ---------------- Console report ----------------
 pd.set_option("display.width", 160)
