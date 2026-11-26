@@ -10,9 +10,9 @@ is rebuilt with backtested time-series and machine-learning models.
 ## Summary
 - **The cost-of-living squeeze hits the bottom hardest.** From 2017-19 to 2023-25,
   essentials (housing, utilities, groceries, health care, child care, vehicle insurance)
-  rose as a share of spending for every household group: +3.7 points for the lowest income
-  fifth and +4.0 for the second, vs +0.7 for the top. For renters, under-35s and the middle
-  three fifths, 2025 is the highest share since at least 1995.
+  rose as a share of spending for every group: +3.7 points for the lowest income fifth,
+  +4.0 for the second, +0.7 for the top. For renters, under-35s and the middle three
+  fifths, 2025 is the highest share since 1995.
 - **The poorest gained nothing.** Income left after essentials stayed at about -$5,000 a
   year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
 - **In New York City the dinner costs $168 (chart 1).** With 11 of 18 items priced from the
@@ -37,10 +37,9 @@ is rebuilt with backtested time-series and machine-learning models.
     pip install -r requirements.txt
     python run_all.py
 
-`run_all.py` runs the scripts in order and saves each console report to `output/`; a full
-run takes under a minute and is reproducible. Charts share a FiveThirtyEight-style theme
-(`chart_style.py`) with an autumn palette; the fonts are bundled in `fonts/` (Inter, SIL
-Open Font License; JetBrains Mono, Apache 2.0).
+`run_all.py` runs everything in under a minute, reproducibly, saving reports to `output/`.
+Charts use a FiveThirtyEight-style theme (`chart_style.py`); fonts are bundled in `fonts/`
+(Inter, SIL OFL; JetBrains Mono, Apache 2.0).
 
 | Script | What it does | Main outputs |
 |---|---|---|
@@ -79,20 +78,18 @@ October 2026 from series still published, after testing the approach.
 - **Results:** the combination is best (8.5% error across months, 8.3% in Octobers).
   Diebold-Mariano tests show it beats the chicken ratio (p = 0.016) and AR(1) errors
   (p = 0.038); no model beats it. It is the main estimate, with an 80% band from backtest
-  errors. (A first version picked the best single model; its edge was noise, so the
-  combination was added. It also wins under the original rule.)
+  errors. (It was added after a single-model pick proved to be noise; it also wins under
+  the original rule.)
 - **Independent check:** without seeing Farm Bureau data, the model matches its turkey
-  price changes for 2021-23 (+38% vs +39% in 2022). In 2025-26 they split: the model passes
-  the bird-flu jump in wholesale prices through to shelf prices (+33% and +35% vs 2019);
-  the Farm Bureau's holiday sale prices stayed low (+3% and +14%). The basket uses regular
-  October shelf prices, so the model is the consistent choice.
+  price changes for 2021-23 (+38% vs +39% in 2022). In 2025-26 the model passes the bird-flu
+  wholesale jump through to shelf prices (+33% and +35% vs 2019) while the Farm Bureau's
+  holiday sale prices stayed low (+3% and +14%); the basket uses regular shelf prices.
 
 ## Comparing with prices vs. with income
-Comparing the dinner with overall prices (CPI) shows whether it rose faster or slower than
-everything else. It is not circular (removing food from CPI changes the result by under a
-point), but it is not affordability either: other prices rising faster is itself the
-squeeze. Affordability is measured against income: hours of work, share of income, and
-income left after essentials.
+Comparing the dinner with CPI shows whether it rose faster than other prices. It is not
+circular (dropping food from CPI changes the result by under a point), but it is not
+affordability: other prices rising faster is itself the squeeze. Affordability is measured
+against income.
 
 ## Data notes
 - **Prices:** BLS October average prices for turkey (until 2020), russet potatoes, milk,
@@ -108,15 +105,13 @@ income left after essentials.
   crescent rolls (x 1.5), cranberry sauce, baby carrots, Libby's pumpkin (x 2), cider (x 2),
   milk (x 2), butter and flour (x 1/5). 2026 uses the Post's 2026 prices; earlier years move
   back from 2025 with each item's BLS price history or CPI group. The other 7 items are
-  national prices x an NYC factor (BEA's 2024 New York metro price parity for goods, 110.3,
-  moved with the New York vs U.S. grocery CPI). Unused Post items: apples, mushrooms, onion,
-  instant potatoes, bakery pies, ice cream. `nyc_item_sources.csv` compares the Post's
-  one-year changes with BLS indexes; the Post's are far larger (milk +50% vs +1%), so treat
-  the 2025-26 jump with care. Charts 2-9 use national prices and incomes.
-- **Why the full menu:** a nine-item basket came to $61 in 2026, near the Farm Bureau's
-  $58.63 classic menu, but both are spare (one dozen rolls and a pound of peas for ten). The
-  full menu ($87) is closer to a real Thanksgiving; it still omits alcohol, appetizers and
-  non-food items.
+  national prices x an NYC factor (BEA's New York metro goods price parity, 110.3 in 2024,
+  moved with the New York vs U.S. grocery CPI). `nyc_item_sources.csv` shows the Post's
+  one-year changes are far larger than BLS indexes (milk +50% vs +1%), so treat the 2025-26
+  jump with care.
+- **Why the full menu:** a nine-item basket ($61 in 2026) and the Farm Bureau's classic
+  menu ($58.63) are spare; the full menu ($87) is closer to a real Thanksgiving but still
+  omits alcohol, appetizers and non-food items.
 - **Turkey comparisons:** `index_summary.csv` also has the basket with the Farm Bureau's
   holiday turkey price and with a chicken-ratio turkey.
 - **Gaps:** October 2013 (turkey) and October 2025 (all items) were not published because of
@@ -130,16 +125,16 @@ as a share of a day's disposable and "discretionary" income per person (disposab
 minus housing, utilities, groceries, health care and energy; BEA, Q3).
 
 Against average wages and per-person income, 2026 is the most affordable year since 1995
-(2.7 hours of work vs 2.8 in 2019). Against median household income it is not (5.2% of a
-week's income in 2025 vs 5.1% in 2019). In these national accounts essentials stay at about
-40-41% of disposable income, but that includes health care paid by employers and government;
-the household data below shows the squeeze in what households pay themselves.
+(2.7 hours of work vs 2.8 in 2019); against median household income it is not (5.2% of a
+week's income in 2025 vs 5.1% in 2019). National essentials stay at 40-41% of disposable
+income, but that counts employer- and government-paid health care; household data below
+shows the squeeze.
 
 ## By income quintile (`by_income.py`)
-Uses the BLS Consumer Expenditure Survey by pre-tax income quintile (1995-2025). Total
-spending is the budget, because the lowest quintile reports spending about twice its
-after-tax income. Essentials = shelter, utilities, food at home and health care (gasoline is
-left out; FRED's quintile series is broken from 2023).
+BLS Consumer Expenditure Survey by pre-tax income quintile, 1995-2025. Total spending is
+the budget, since the lowest quintile reports spending about twice its after-tax income.
+Essentials = shelter, utilities, food at home and health care (gasoline excluded; its
+quintile series is broken from 2023).
 
 - **A week of spending (chart 5).** In 2025 the lowest fifth spends about $730 a week: $405
   on essentials, leaving $325, of which the $87 dinner takes 27%. The dinner is 12.0% of
@@ -151,11 +146,8 @@ left out; FRED's quintile series is broken from 2023).
   spending about 120% of its income, so its shares are approximate; the 2004 drop reflects a
   change in income measurement. (Bottom half = lowest two fifths plus half the middle.)
 - Essentials take a near-record share of *spending* in every quintile (2025: 55% lowest,
-  53% second, 47% middle). Incomes kept up, but households devote more of what they spend
-  to essentials.
-- After essentials, the dinner takes more of what is left than in 2019 for every quintile;
-  as a share of total spending it is near its low for the lowest fifth. For the lowest
-  fifth it costs about 27% of a week's non-essential spending, vs about 5% for the top.
+  53% second, 47% middle), even though incomes kept up.
+- After essentials, the dinner takes more of what is left than in 2019 for every quintile.
 
 ## Who is squeezed? (`deep_dive.py`)
 Tests the averages across 14 household groups (income fifths, renters, homeowners, single
@@ -171,8 +163,7 @@ parents, married couples with young or school-age children, four age groups).
   to 4th-most hours in 32 years) and the lowest fifth's dinner-to-income share is the
   lowest on record.
 
-Limitations: group averages hide variation within groups; the survey misses people without
-stable housing; gasoline is excluded; everyone pays national average prices; and the lowest
-fifth's income-based measures are rough. Context: the saving rate is 4.1% (Oct 2026) vs 7.3%
+Limitations: averages hide variation within groups; the survey misses people without stable
+housing; everyone pays national average prices; the lowest fifth's income is under-reported. Context: the saving rate is 4.1% (Oct 2026) vs 7.3%
 in 2019; credit card delinquency is 2.85%, above 2019 (2.58%) but below its 1995-2019
 average (3.86%).
