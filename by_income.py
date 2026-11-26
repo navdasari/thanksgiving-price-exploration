@@ -17,7 +17,6 @@ import pandas as pd
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).parent
 CEX, OUT = ROOT / "data" / "cex", ROOT / "output"
@@ -67,16 +66,25 @@ for col, label in [("essentials_pct_of_spending", "Essentials, % of total spendi
           {k: int(t[k].dropna().rank().loc[last]) for k in t.columns}, f"of {len(t[t.columns[0]].dropna())} years")
 
 # ---------- Charts ----------
-plt.rcParams.update({"figure.dpi": 150, "axes.spines.top": False, "axes.spines.right": False,
-                     "axes.grid": True, "grid.alpha": 0.3, "font.size": 10})
-colors = ["#b5541c", "#e0a458", "#8a8a8a", "#7f93b8", "#5b6c8f"]
-fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
-for (name, g), c in zip(panel.groupby("quintile", sort=False), colors):
-    lw = 2.6 if name == "Lowest 20%" else 1.4
-    axes[0].plot(g.year, g.essentials_pct_of_spending, color=c, lw=lw, label=name)
-    axes[1].plot(g.year, g.dinner_pct_of_week_nonessential, color=c, lw=lw, label=name)
-axes[0].set(title="Essentials, % of total spending", ylabel="%")
-axes[1].set(title="Dinner for 10, % of a week's non-essential spending", ylabel="%")
-axes[0].legend(frameon=False, fontsize=8)
-fig.suptitle("By income quintile (Consumer Expenditure Survey)", fontsize=11)
-fig.tight_layout(); fig.savefig(OUT / "6_by_income.png"); plt.close(fig)
+import chart_style as cs
+
+colors = {"Lowest 20%": cs.RED, "Second 20%": cs.GOLD, "Middle 20%": cs.GRAY,
+          "Fourth 20%": cs.GREEN, "Highest 20%": cs.BLUE}
+fig, axes = cs.figure(1, 2, width=12, height=6.4)
+offsets_l = {"Lowest 20%": 1.5, "Second 20%": -0.8}
+for name, g in panel.groupby("quintile", sort=False):
+    c = colors[name]
+    axes[0].plot(g.year, g.essentials_pct_of_spending, color=c, lw=3 if name == "Lowest 20%" else 2.2)
+    axes[1].plot(g.year, g.dinner_pct_of_week_nonessential, color=c, lw=3 if name == "Lowest 20%" else 2.2)
+    last = g.iloc[-1]
+    cs.label_end(axes[1], last.year, last.dinner_pct_of_week_nonessential, name, c, dx=0.6, size=9.5,
+                 dy={"Fourth 20%": 0.4, "Highest 20%": -0.6}.get(name, 0))
+axes[0].set_title("Essentials, % of total spending")
+axes[1].set_title("Dinner for 10, % of a week's non-essential spending")
+axes[0].set_ylim(30, 65); cs.baseline(axes[0], 30)
+axes[1].set_ylim(0, 27); cs.baseline(axes[1], 0)
+cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], suffix="%")
+fig.subplots_adjust(right=0.87)
+cs.finish(fig, "Essentials take more of every budget; the dinner takes less",
+          "By income fifth, 1995-2025. Essentials: shelter, utilities, groceries, health care.",
+          "BLS Consumer Expenditure Survey via FRED", OUT / "6_by_income.png")

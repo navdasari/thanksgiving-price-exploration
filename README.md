@@ -36,6 +36,9 @@ Run it with:
     python by_income.py       # run after build_index.py
     python deep_dive.py       # run after build_index.py
 
+Charts share one style, defined in `chart_style.py` (uses the Inter and JetBrains Mono
+fonts if installed, otherwise falls back to system fonts).
+
 Outputs go to `output/`: summary tables (CSV), three charts, and a text report.
 
 ## Comparing with other prices vs. with income

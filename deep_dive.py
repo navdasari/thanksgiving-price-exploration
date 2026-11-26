@@ -22,7 +22,6 @@ import pandas as pd
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).parent
 DATA, CEX, OUT = ROOT / "data", ROOT / "data" / "cex", ROOT / "output"
@@ -184,31 +183,44 @@ print(f"  % of 10th-pct weekly pay: 2019 {p_alt[2019]:.1f}, 2026 {p_alt[2026]:.1
       f"2026 rank (1 = most affordable) {int(p_alt.rank().loc[2026])}/{p_alt.notna().sum()}")
 
 # ---------------- Charts ----------------
-plt.rcParams.update({"figure.dpi": 150, "axes.spines.top": False, "axes.spines.right": False,
-                     "axes.grid": True, "grid.alpha": 0.3, "font.size": 9})
-show = ["Income: lowest 20%", "Income: second 20%", "Renters", "Single parents",
-        "Married, oldest child under 6", "Age under 25", "Income: highest 20%"]
-colors = ["#b5541c", "#e0a458", "#2f7d4f", "#8e44ad", "#c0392b", "#7f93b8", "#5b6c8f"]
-fig, axes = plt.subplots(1, 2, figsize=(13, 5))
-for name, c in zip(show, colors):
-    g = panel[panel.group == name]
-    axes[0].plot(g.year, g.broad_pct_spending, color=c, lw=2 if "lowest" in name or name == "Single parents" else 1.3, label=name)
-    if name != "Income: highest 20%":
-        axes[1].plot(g.year, g.left_after_broad_income_real2025 / 1000, color=c, lw=2 if "lowest" in name or name == "Single parents" else 1.3)
-axes[0].set(title="Essentials incl. child care, % of spending", ylabel="%")
-axes[1].axhline(0, color="black", lw=0.7)
-axes[1].set(title="Before-tax income left after essentials (2025 $, thousands; top 20% omitted)", ylabel="$k")
-axes[0].legend(frameon=False, fontsize=8)
-fig.tight_layout(); fig.savefig(OUT / "7_who_is_squeezed.png"); plt.close(fig)
+import chart_style as cs
 
-fig, ax = plt.subplots(figsize=(9, 4.5))
+show = {"Income: lowest 20%": cs.RED, "Income: second 20%": cs.GOLD, "Renters": cs.GREEN,
+        "Single parents": cs.PURPLE, "Married, oldest child under 6": cs.BLUE,
+        "Age under 25": cs.GRAY, "Income: highest 20%": cs.DARK}
+fig, axes = cs.figure(1, 2, width=12, height=6.8)
+for name, c in show.items():
+    g = panel[panel.group == name]
+    lw = 3 if name in ("Income: lowest 20%", "Single parents") else 2
+    axes[0].plot(g.year, g.broad_pct_spending, color=c, lw=lw, label=name.replace("Income: lowest", "Lowest").replace("Income: second", "Second").replace("Income: highest", "Highest"))
+    if name not in ("Income: highest 20%", "Married, oldest child under 6"):
+        axes[1].plot(g.year, g.left_after_broad_income_real2025 / 1000, color=c, lw=lw)
+axes[0].set_title("Essentials incl. child care, % of spending")
+axes[1].set_title("Income left after essentials, 2025 dollars")
+axes[0].set_ylim(30, 65); cs.baseline(axes[0], 30)
+cs.baseline(axes[1], 0)
+cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], prefix="$", suffix="k")
+fig.legend(*axes[0].get_legend_handles_labels(), ncol=4, loc="upper left", bbox_to_anchor=(0.065, 0.84),
+           handlelength=1.4, columnspacing=1.6, fontsize=9.5)
+fig.subplots_adjust(top=0.7, right=0.97)
+cs.finish(fig, "The squeeze is widest at the bottom",
+          "Household types, 1995-2025. Essentials: shelter, utilities, groceries, health care, child care, vehicle insurance.",
+          "BLS Consumer Expenditure Survey via FRED", OUT / "7_who_is_squeezed.png",
+          note="Right panel omits the top fifth and married couples with young children, whose incomes are far higher.")
+
 w = wage.dropna(subset=["hours_at_federal_min"])
-ax.plot(w.index, w.hours_at_federal_min, color="#b5541c", lw=2.2, label="Hours at federal minimum wage")
-ax2 = ax.twinx()
-ax2.plot(w.index, w.pct_of_decile1_week, color="#5b6c8f", lw=1.6, ls="--", label="% of 10th-percentile weekly pay (right)")
-ax2.spines["top"].set_visible(False)
-ax.set(title="Thanksgiving dinner for 10, for low-wage workers", ylabel="hours")
-ax2.set_ylabel("%")
-h1, l1 = ax.get_legend_handles_labels(); h2, l2 = ax2.get_legend_handles_labels()
-ax.legend(h1 + h2, l1 + l2, frameon=False, loc="upper left")
-fig.tight_layout(); fig.savefig(OUT / "8_low_wage.png"); plt.close(fig)
+fig, axes = cs.figure(1, 2, width=12, height=6.2)
+axes[0].plot(w.index, w.hours_at_federal_min, color=cs.RED)
+d = w.pct_of_decile1_week.dropna()
+axes[1].plot(d.index, d, color=cs.BLUE)
+axes[0].set_title("Hours of work at the federal minimum wage")
+axes[1].set_title("% of a week's pay, 10th-percentile full-time worker")
+axes[0].set_ylim(0, 10); cs.baseline(axes[0], 0)
+axes[1].set_ylim(0, 15); cs.baseline(axes[1], 0)
+axes[0].annotate("$7.25 since 2009", (2009, w.hours_at_federal_min[2009]), xytext=(2001, 3.2),
+                 fontsize=9.5, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=1))
+cs.unit_on_top(axes[0], suffix=" hrs"); cs.unit_on_top(axes[1], suffix="%")
+fig.subplots_adjust(right=0.97)
+cs.finish(fig, "For minimum-wage workers, the dinner costs more work",
+          "Thanksgiving dinner for 10, 1995-2026",
+          "BLS via FRED, U.S. Department of Labor", OUT / "8_low_wage.png")

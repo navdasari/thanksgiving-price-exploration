@@ -15,7 +15,6 @@ import pandas as pd
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).parent
 DATA, OUT = ROOT / "data", ROOT / "output"
@@ -73,25 +72,35 @@ print("\nEssentials per person, Q3 ($/yr):")
 print(ess_pc.loc[[2019, 2022, 2025, 2026]].round(0).to_string())
 
 # ---------- Charts ----------
-plt.rcParams.update({"figure.dpi": 150, "axes.spines.top": False, "axes.spines.right": False,
-                     "axes.grid": True, "grid.alpha": 0.3, "font.size": 10})
+import chart_style as cs
+
 cpi = summary["cpi_all_items_2019=100"]
 real = dinner / cpi * 100
-fig, ax = plt.subplots(figsize=(9, 5))
-for s, lab, c, ls in [(real, "Price relative to all prices (CPI)", "#b5541c", "-"),
-                      (out.hours_of_work, "Hours of work (avg wage)", "#2f7d4f", "-"),
-                      (out.per_guest_pct_of_daily_dpi, "Share of disposable income", "#5b6c8f", "--"),
-                      (out.per_guest_pct_of_daily_discretionary, "Share of discretionary income", "#e0a458", "-")]:
-    s = s.dropna()
-    ax.plot(s.index, 100 * s / s.loc[2019], lw=2, color=c, ls=ls, label=lab)
-ax.axhline(100, color="black", lw=0.6)
-ax.set(title="Thanksgiving dinner affordability, 2019 = 100 (lower = more affordable)", xlabel="")
-ax.legend(frameon=False)
-fig.tight_layout(); fig.savefig(OUT / "4_affordability.png"); plt.close(fig)
+fig, ax = cs.figure()
+series = [(real, "Price vs. all prices", cs.GRAY, 3.5), (out.hours_of_work, "Hours of work", cs.BLUE, 2.5),
+          (out.per_guest_pct_of_daily_discretionary, "Discretionary income", cs.GOLD, -1),
+          (out.per_guest_pct_of_daily_dpi, "Disposable income", cs.RED, -4.5)]
+for s, lab, c, dy in series:
+    s = s.dropna(); v = 100 * s / s.loc[2019]
+    ax.plot(v.index, v, color=c, lw=2.2 if c == cs.GRAY else 3)
+    cs.label_end(ax, v.index[-1], v.iloc[-1], lab, c, dy=dy, size=9.5)
+ax.set_xlim(1994, 2027)
+ax.set_ylim(75, 155)
+fig.subplots_adjust(right=0.8)
+cs.baseline(ax, 100)
+cs.unit_on_top(ax)
+cs.finish(fig, "Measured against income, the dinner is the most affordable in decades",
+          "Cost of a Thanksgiving dinner for 10 relative to each yardstick, 2019 = 100 (lower = more affordable)",
+          "BLS, BEA and Census via FRED", OUT / "4_affordability.png")
 
-fig, ax = plt.subplots(figsize=(9, 4.5))
+fig, ax = cs.figure()
 e = out.essentials_share_of_dpi.dropna()
-ax.plot(e.index, e, lw=2.2, color="#5b6c8f")
-ax.set(title="Spending on housing, groceries, health care and energy, % of disposable income",
-       ylabel="%", xlabel="")
-fig.tight_layout(); fig.savefig(OUT / "5_essentials_share.png"); plt.close(fig)
+ax.plot(e.index, e, color=cs.BLUE)
+ax.set_ylim(30, 50)
+ax.set_yticks([30, 35, 40, 45, 50])
+cs.baseline(ax, 30)
+cs.unit_on_top(ax, suffix="%")
+cs.finish(fig, "In national totals, essentials look flat",
+          "Housing, groceries, health care and energy, as a share of disposable income",
+          "BEA via FRED", OUT / "5_essentials_share.png",
+          note="National totals include health care paid by employers and government; household budgets are in by_income.py and deep_dive.py.")
