@@ -189,11 +189,18 @@ cs.finish(fig, "Since 2019, the dinner's price rose less than prices overall",
 
 # 3. YoY contributions, recent years, grouped into four categories
 recent = contrib.loc[2015:]
+# All nine items; related foods share a hue family (dairy = golds, baking = blues)
 groups = {"Turkey": (["Turkey"], cs.RED),
-          "Dairy and eggs": (["Butter", "Eggs", "Milk", "Ice cream (pie)"], cs.GOLD),
-          "Bread, flour, sugar": (["Bread (stuffing)", "Flour (rolls, crust)", "Sugar"], cs.BLUE),
-          "Potatoes": (["Potatoes"], cs.GREEN)}
+          "Potatoes": (["Potatoes"], cs.GREEN),
+          "Butter": (["Butter"], cs.GOLD),
+          "Milk": (["Milk"], "#F2CF7E"),
+          "Eggs": (["Eggs"], "#A8741A"),
+          "Ice cream": (["Ice cream (pie)"], cs.PURPLE),
+          "Bread": (["Bread (stuffing)"], cs.BLUE),
+          "Flour": (["Flour (rolls, crust)"], "#8CCDEE"),
+          "Sugar": (["Sugar"], cs.GRAY)}
 fig, ax = cs.figure()
+fig.subplots_adjust(top=0.72)
 pos = np.zeros(len(recent)); neg = np.zeros(len(recent))
 for name, (cols, c) in groups.items():
     v = recent[cols].sum(axis=1).values
@@ -201,7 +208,7 @@ for name, (cols, c) in groups.items():
     pos += np.where(v >= 0, v, 0); neg += np.where(v < 0, v, 0)
 ax.scatter(recent.index, recent.sum(axis=1), color=cs.TEXT, s=38, zorder=4, label="Net change")
 cs.baseline(ax, 0)
-ax.legend(ncol=5, loc="upper left", bbox_to_anchor=(0, 1.08), handlelength=1.2, columnspacing=1.4)
+ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.4)
 from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
 ax.set_xticklabels([f"'{y % 100:02d}" for y in recent.index])
