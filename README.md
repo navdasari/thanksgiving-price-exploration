@@ -44,7 +44,7 @@ the same on any machine.
 | `turkey_price_ml_modeling.py` | Nowcasts the discontinued retail turkey price (ML and time-series ensemble, backtested) | `turkey_price_nowcast.csv`, `turkey_price_model_metrics.csv`, charts 8-9 |
 | `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
 | `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
-| `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4-5 |
+| `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, `week_of_spending.csv`, charts 4-5 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
 
 ## Nowcasting the turkey price: ML and time-series ensemble (`turkey_price_ml_modeling.py`)
@@ -112,6 +112,11 @@ twice its after-tax income. Essentials = shelter, utilities, food at home and he
 (gasoline is left out: FRED's quintile series is broken from 2023).
 
 Findings:
+- **A week of spending (chart 5).** In 2025 the lowest fifth spends about $730 a week:
+  $405 on essentials, leaving $325, of which the $63 dinner for 10 takes 19%. The same
+  dinner is 8.6% of the lowest fifth's whole week vs 2.0% of the top fifth's ($3,068).
+  Since 1995, in 2025 dollars, the lowest fifth's week grew from $594 to $730, but $99 of
+  that went to essentials and only $36 to everything else.
 - **Bottom vs top half (chart 4).** Housing (rent or mortgage, property costs, utilities),
   health care and groceries take about 62% of the bottom half's before-tax income in 2025,
   vs 25% for the top half. As a share of *income*, neither has risen much: the bottom

@@ -67,28 +67,70 @@ for col, label in [("essentials_pct_of_spending", "Essentials, % of total spendi
 
 # ---------- Charts ----------
 import chart_style as cs
+from matplotlib.patches import Patch
+from matplotlib.ticker import FuncFormatter
 
-# Income fifths run along an autumn ramp: cranberry (lowest) to pine (highest)
-colors = {"Lowest 20%": cs.RED, "Second 20%": cs.PUMPKIN, "Middle 20%": cs.GOLD,
-          "Fourth 20%": cs.GREEN, "Highest 20%": cs.BLUE}
-fig, axes = cs.figure(1, 2, width=12, height=6.4)
-offsets_l = {"Lowest 20%": 1.5, "Second 20%": -0.8}
-for name, g in panel.groupby("quintile", sort=False):
-    c = colors[name]
-    axes[0].plot(g.year, g.essentials_pct_of_spending, color=c, lw=3 if name == "Lowest 20%" else 2.2)
-    axes[1].plot(g.year, g.dinner_pct_of_week_nonessential, color=c, lw=3 if name == "Lowest 20%" else 2.2)
-    last = g.iloc[-1]
-    cs.label_end(axes[1], last.year, last.dinner_pct_of_week_nonessential, name, c, dx=0.6, size=9.5,
-                 dy={"Fourth 20%": 0.4, "Highest 20%": -0.6}.get(name, 0))
-axes[0].set_title("Essentials, % of total spending")
-axes[1].set_title("Dinner for 10, % of a week's non-essential spending")
-axes[0].set_ylim(30, 65); cs.baseline(axes[0], 30)
-axes[1].set_ylim(0, 27); cs.baseline(axes[1], 0)
-cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], suffix="%")
-fig.subplots_adjust(right=0.87)
-cs.finish(fig, "Essentials take more of every budget, leaving less room for the dinner",
-          "By income fifth, 1995-2025. Essentials: shelter, utilities, groceries, health care.",
-          "BLS Consumer Expenditure Survey via FRED", OUT / "5_by_income.png")
+# ---------- Chart 5: one week of spending, with Thanksgiving dinner carved out ----------
+# Each bar is a typical week (annual spending / 52), drawn to scale in dollars and split
+# into essentials, the dinner for 10, and everything else (essentials + non-essential = total).
+ESS_C, DIN_C, OTH_C = "#A8927C", cs.RED, "#E6DAC4"
+cpi = pd.read_csv(ROOT / "data" / "CPIAUCSL.csv", parse_dates=["observation_date"], na_values=".")
+cpi = cpi.set_index("observation_date").iloc[:, 0].dropna().groupby(lambda d: d.year).mean()
+LATEST = int(panel.year.max())
+week = panel.assign(week_total=panel.total_spending / 52, week_ess=panel.essentials / 52)
+week["week_other"] = week.week_total - week.week_ess - week.dinner_cost
+week["dinner_pct_of_week"] = 100 * week.dinner_cost / week.week_total
+week["dinner_pct_of_nonessential"] = 100 * week.dinner_cost / (week.week_total - week.week_ess)
+week.round(3).to_csv(OUT / "week_of_spending.csv", index=False)
+
+fig, axes = cs.figure(1, 2, width=13, height=6.9, gridspec_kw={"width_ratios": [1.7, 1]})
+fig.subplots_adjust(left=0.1, right=0.97, wspace=0.32, top=0.72)
+
+
+def week_bars(ax, rows, labels, scale=1.0):
+    ys = list(range(len(rows)))[::-1]
+    for y, (_, r) in zip(ys, rows.iterrows()):
+        e, d, o = r.week_ess * scale, r.dinner_cost * scale, r.week_other * scale
+        ax.barh(y, e, color=ESS_C, height=0.62, edgecolor=cs.BG, lw=1)
+        ax.barh(y, d, left=e, color=DIN_C, height=0.62, edgecolor=cs.BG, lw=1)
+        ax.barh(y, o, left=e + d, color=OTH_C, height=0.62, edgecolor=cs.BG, lw=1)
+        ax.text(e / 2, y, f"${e:,.0f}", color="white", ha="center", va="center", fontsize=9.5, fontweight="semibold")
+        ax.text(e + d + o + 25, y + 0.12, f"${e + d + o:,.0f} a week", color=cs.TEXT, va="center",
+                fontsize=10, fontweight="semibold")
+        ax.text(e + d + o + 25, y - 0.17, f"dinner = {r.dinner_pct_of_week:.1f}%", color=DIN_C, va="center",
+                fontsize=9.5, fontweight="semibold")
+    ax.set_yticks(ys)
+    ax.set_yticklabels(labels)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", visible=True)
+    ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"${v:,.0f}"))
+    ax.axvline(0, color="#B9A68E", lw=1.2)
+
+
+now = week[week.year == LATEST].set_index("quintile").loc[list(QUINTILES.values())]
+week_bars(axes[0], now, list(now.index))
+axes[0].set_xlim(0, now.week_total.max() * 1.22)
+axes[0].set_title(f"A typical week in {LATEST}, by income fifth")
+
+YEARS = [1995, 2007, 2019, LATEST]
+low = week[(week.quintile == "Lowest 20%") & (week.year.isin(YEARS))].set_index("year").loc[YEARS]
+real = low.copy()
+for c in ["week_ess", "dinner_cost", "week_other", "week_total"]:
+    real[c] = low[c] * cpi[LATEST] / cpi.reindex(low.index)
+week_bars(axes[1], real, [str(y) for y in YEARS])
+axes[1].set_xlim(0, real.week_total.max() * 1.45)
+axes[1].set_title(f"Lowest fifth over time ({LATEST} dollars)")
+
+fig.legend(handles=[Patch(color=ESS_C, label="Essentials (shelter, utilities, groceries, health care)"),
+                    Patch(color=DIN_C, label="Thanksgiving dinner for 10"),
+                    Patch(color=OTH_C, label="Everything else")],
+           loc="upper left", bbox_to_anchor=(0.1, 0.83), ncol=3, handlelength=1.2, columnspacing=1.8)
+d = now.loc["Lowest 20%"]
+cs.finish(fig, f"For the poorest fifth, the dinner takes {d.dinner_pct_of_nonessential:.0f}% of what's left after essentials",
+          f"A week of household spending, to scale. The same ${d.dinner_cost:.0f} dinner is {d.dinner_pct_of_week:.1f}% of the lowest fifth's week "
+          f"and {now.loc['Highest 20%'].dinner_pct_of_week:.1f}% of the top fifth's.",
+          "BLS Consumer Expenditure Survey and average prices via FRED", OUT / "5_week_of_spending.png",
+          note="Weekly spending = annual spending / 52. Households in the lowest fifth average about 1.5 people, so a dinner for 10 is a hosting cost.")
 
 # ---------- Chart 4: essentials as a share of income, bottom vs top half ----------
 # Bottom 50% = lowest two fifths + half of the middle fifth; top 50% = the rest.
