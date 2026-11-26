@@ -196,7 +196,7 @@ for name, c in show.items():
     g = panel[panel.group == name]
     lw = 3 if name in ("Income: lowest 20%", "Single parents") else 2
     axes[0].plot(g.year, g.broad_pct_spending, color=c, lw=lw, label=name.replace("Income: lowest", "Lowest").replace("Income: second", "Second").replace("Income: highest", "Highest"))
-    if name not in ("Income: highest 20%", "Married, oldest child under 6"):
+    if name != "Married, oldest child under 6":
         axes[1].plot(g.year, g.left_after_broad_income_real2025 / 1000, color=c, lw=lw)
 axes[0].set_title("Essentials incl. child care, % of spending")
 axes[1].set_title("Income left after essentials, 2025 dollars")
@@ -209,7 +209,7 @@ fig.subplots_adjust(top=0.7, right=0.97)
 cs.finish(fig, "The squeeze is widest at the bottom",
           "Household types, 1995-2025. Essentials: shelter, utilities, groceries, health care, child care, vehicle insurance.",
           "BLS Consumer Expenditure Survey via FRED", OUT / "6_who_is_squeezed.png",
-          note="Right panel omits the top fifth and married couples with young children, whose incomes are far higher.")
+          note="Right panel omits married couples with young children (much higher incomes and a one-year spike in 2019).")
 
 w = wage.dropna(subset=["hours_at_federal_min"])
 fig, axes = cs.figure(1, 2, width=12, height=6.2)
