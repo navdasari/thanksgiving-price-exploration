@@ -33,9 +33,11 @@ backtested time-series and machine-learning models.
 
 `run_all.py` runs the scripts in order (turkey model, then the index, then the analyses)
 and saves each console report to `output/`. A full run takes under a minute and gives
-identical results each time. Charts use a Thanksgiving theme from `chart_style.py` (autumn
-palette, Source Serif Pro headlines, Source Sans Pro labels). The fonts are bundled in
-`fonts/` under the SIL Open Font License, so charts look the same on any machine.
+identical results each time. Charts use a Thanksgiving theme from `chart_style.py`: an
+autumn palette on a cream background, with FiveThirtyEight-style type (Inter for headlines
+and labels, JetBrains Mono for tick labels and sources). The fonts are bundled in `fonts/`
+(Inter under the SIL Open Font License, JetBrains Mono under Apache 2.0), so charts look
+the same on any machine.
 
 | Script | What it does | Main outputs |
 |---|---|---|

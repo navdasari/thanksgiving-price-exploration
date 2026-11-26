@@ -1,17 +1,19 @@
-"""Shared Thanksgiving chart theme: warm cream canvas, an autumn harvest palette, serif
-headlines (Source Serif Pro) with sans-serif labels (Source Sans Pro), a thin harvest
-stripe across the top, dots at line ends and a small project mark in the footer.
+"""Shared Thanksgiving chart theme: warm cream canvas and an autumn harvest palette, with
+FiveThirtyEight-style type: a bold grotesk headline and labels (Inter) and monospaced tick
+labels and source line (JetBrains Mono). Dots mark line ends; a small project mark sits in
+the footer.
 
-The fonts ship in fonts/ (SIL Open Font License) so the charts look the same anywhere."""
+The fonts ship in fonts/ (Inter: SIL Open Font License; JetBrains Mono: Apache 2.0) so the
+charts look the same anywhere."""
+import textwrap
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
-from matplotlib.patches import Rectangle
 from matplotlib.ticker import FuncFormatter
 
 FONT_DIR = Path(__file__).parent / "fonts"
-for f in FONT_DIR.glob("*.ttf"):
+for f in sorted(FONT_DIR.glob("*.ttf")) + sorted(FONT_DIR.glob("*.otf")):
     font_manager.fontManager.addfont(str(f))
 
 
@@ -20,8 +22,8 @@ def _font(preferred, fallback):
     return next((p for p in preferred if p in names), fallback)
 
 
-SERIF = _font(["Source Serif Pro", "Bitstream Charter", "DejaVu Serif"], "serif")
-SANS = _font(["Source Sans Pro", "Inter", "Helvetica", "Arial", "Liberation Sans"], "DejaVu Sans")
+SANS = _font(["Inter", "Helvetica Neue", "Helvetica", "Arial", "Liberation Sans"], "DejaVu Sans")
+MONO = _font(["JetBrains Mono", "DejaVu Sans Mono", "Liberation Mono"], "monospace")
 
 # Canvas and text
 BG = "#FBF6EC"          # cream
@@ -41,7 +43,6 @@ GRAY = "#B3A493"        # oat
 DARK = "#4A3426"        # roasted chestnut
 LIGHT_GOLD, DARK_GOLD, LIGHT_BLUE = "#F0D08E", "#A8701F", "#9DB5A3"
 PALETTE = [RED, PUMPKIN, GOLD, GREEN, BLUE, PURPLE]
-HARVEST_STRIPE = [RED, PUMPKIN, GOLD, GREEN, BLUE]
 
 
 def apply():
@@ -57,7 +58,7 @@ def apply():
         "axes.prop_cycle": plt.cycler(color=PALETTE), "lines.linewidth": 2.8,
         "lines.solid_capstyle": "round", "lines.solid_joinstyle": "round",
         "legend.frameon": False, "legend.fontsize": 10.5,
-        "axes.titlesize": 13, "axes.titleweight": "semibold", "axes.titlelocation": "left",
+        "axes.titlesize": 13, "axes.titleweight": "bold", "axes.titlelocation": "left",
         "axes.titlepad": 12, "axes.titlecolor": TEXT,
     })
 
@@ -107,20 +108,37 @@ def label_end(ax, x, y, text, color, dy=0, dx=0.4, size=10.5, weight="semibold",
                 fontsize=size, fontweight=weight, va="center", ha="left", annotation_clip=False)
 
 
+def mono_ticks(fig):
+    """Monospaced tick labels, as in FiveThirtyEight charts."""
+    fig.canvas.draw()
+    for ax in fig.axes:
+        for lab in ax.get_xticklabels() + ax.get_yticklabels():
+            lab.set_fontfamily(MONO)
+            lab.set_fontsize(10)
+
+
 def finish(fig, title, subtitle, source, path, note=None):
-    # Harvest stripe across the top edge
-    n = len(HARVEST_STRIPE)
-    for i, c in enumerate(HARVEST_STRIPE):
-        fig.patches.append(Rectangle((i / n, 0.988), 1 / n, 0.012, transform=fig.transFigure,
-                                     color=c, figure=fig, zorder=10))
-    fig.text(0.075, 0.95, title, fontsize=20, fontweight="bold", fontfamily=SERIF,
-             ha="left", va="top", color=TEXT)
-    fig.text(0.075, 0.875, subtitle, fontsize=12, ha="left", va="top", color=MUTED)
+    fig.text(0.075, 0.95, title, fontsize=19.5, fontweight="bold", ha="left", va="top", color=TEXT)
+    fig.text(0.075, 0.875, subtitle, fontsize=12.5, ha="left", va="top", color=MUTED)
+    note_txt = None
     if note:
         fig.subplots_adjust(bottom=0.17)
-        fig.text(0.075, 0.058, note, fontsize=9, color=MUTED, ha="left", va="bottom", style="italic")
-    fig.text(0.075, 0.026, f"Source: {source}", fontsize=9, color=MUTED, ha="left", va="bottom")
-    fig.text(0.975, 0.026, "THANKSGIVING DINNER PRICE INDEX", fontsize=8.5, color=RED,
-             fontweight="semibold", ha="right", va="bottom")
+        note_txt = fig.text(0.075, 0.058, note, fontsize=9.5, color=MUTED, ha="left", va="bottom", style="italic")
+    src = fig.text(0.075, 0.026, f"SOURCE: {source}".upper(), fontsize=8.5, color=MUTED, ha="left",
+                   va="bottom", fontfamily=MONO)
+    mark = fig.text(0.975, 0.026, "THANKSGIVING DINNER PRICE INDEX", fontsize=8.5, color=RED,
+                    fontweight="bold", ha="right", va="bottom", fontfamily=MONO)
+    # Wrap the source line if it would run into the project mark
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    room = mark.get_window_extent(r).x0 - src.get_window_extent(r).x0 - 20
+    width = src.get_window_extent(r).width
+    if width > room:
+        chars = int(len(src.get_text()) * room / width)
+        src.set_text(textwrap.fill(src.get_text(), chars))
+        fig.subplots_adjust(bottom=fig.subplotpars.bottom + 0.03)
+        if note_txt is not None:
+            note_txt.set_y(0.088)
+    mono_ticks(fig)
     fig.savefig(path)
     plt.close(fig)
