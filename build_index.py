@@ -177,9 +177,27 @@ AFBF = {2015: 50.11, 2016: 49.87, 2017: 49.12, 2018: 48.90, 2019: 48.91, 2020: 4
         2021: 53.31, 2022: 64.05, 2023: 61.17, 2024: 58.08, 2025: 55.18, 2026: 58.63}
 afbf = pd.Series(AFBF)
 
+# ---------------- New York City prices ----------------
+# BLS does not publish average food prices for the New York metro. NYC prices = national
+# prices x an NYC price factor. The factor's level comes from BEA's Regional Price Parity
+# for goods in the New York-Newark-Jersey City metro (2024); it moves over time with the
+# ratio of the New York metro food-at-home CPI to the U.S. food-at-home CPI (annual
+# averages; 2026 uses January-October).
+NYC_ANCHOR_YEAR = 2024
+rpp_goods = load("RPPGOOD35620")
+rpp_goods.index = rpp_goods.index.year
+ny_us = (load("CUURA101SAF11") / load("CUUR0000SAF11")).dropna()
+ny_us = ny_us.groupby(ny_us.index.year).mean()
+nyc_factor = (ny_us / ny_us[NYC_ANCHOR_YEAR] * rpp_goods[NYC_ANCHOR_YEAR] / 100).reindex(total.index)
+cost_nyc = cost.mul(nyc_factor, axis=0)
+total_nyc = cost_nyc.sum(axis=1)
+contrib_nyc = cost_nyc.diff().dropna()
+
 # ---------------- Save tables ----------------
 summary = pd.DataFrame({
     "basket_cost": total.round(2),
+    "basket_cost_nyc": total_nyc.round(2),
+    "nyc_price_factor": nyc_factor.round(4),
     "basket_cost_afbf_turkey": total_afbf.round(2),
     "basket_cost_chicken_proxy": total_chicken.round(2),
     f"basket_cost_{latest}_dollars": real_total.round(2),
@@ -198,6 +216,16 @@ summary["butter_estimated"] = summary["butter_estimated"].astype("boolean").fill
 summary.to_csv(OUT / "index_summary.csv")
 cost.round(2).to_csv(OUT / "item_costs.csv")
 contrib.round(2).to_csv(OUT / "yoy_contributions.csv")
+cost_nyc.round(2).to_csv(OUT / "item_costs_nyc.csv")
+# Item-by-item NYC estimate for the latest October, to check against real store prices
+units = {k: (v[1], v[2]) for k, v in BASKET.items()}
+check = pd.DataFrame({
+    "quantity": [f"{q:g} {u}" if src != "ANCHOR" else u for k, (src, q, u) in BASKET.items()],
+    "nyc_estimate_$": cost_nyc.loc[latest].round(2),
+    "national_$": cost.loc[latest].round(2),
+}, index=list(BASKET))
+check.index.name = "item"
+check.to_csv(OUT / f"nyc_item_prices_{latest}.csv")
 
 # ---------------- Charts ----------------
 import chart_style as cs
@@ -210,28 +238,27 @@ fig, ax = cs.figure()
 fig.subplots_adjust(right=0.82)
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
 ax.text(2019.7, 8, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
-ax.set_ylim(FLOOR, 110)
-cs.soft_fill(ax, total.index, total, cs.RED, floor=FLOOR)
-ax.plot(total.index, total, color=cs.RED)
-cs.end_dot(ax, latest, total[latest], cs.RED)
-ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
+ax.set_ylim(FLOOR, 125)
+ax.plot(total_nyc.index, total_nyc, color=cs.RED)
+ax.plot(total.index, total, color=cs.GOLD, lw=2.4)
 ax.plot(afbf.index, afbf, color=cs.DARK, lw=1.8, marker="o", ms=4.5, markeredgecolor=cs.BG)
 ax.set_xlim(1994, latest + 1)
 cs.baseline(ax, FLOOR)
 ax.text(2012.3, afbf[2015] - 15, "Farm Bureau\nclassic menu", color=cs.DARK, fontsize=10, fontweight="semibold")
-cs.label_end(ax, latest, total[latest], f"Typical Thanksgiving\ndinner: ${total[latest]:.0f}", cs.RED, dy=6, size=11, weight="bold", dot=False)
-cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-3, weight="normal", size=9.5, dot=False)
+cs.label_end(ax, latest, total_nyc[latest], f"Typical Thanksgiving\ndinner, NYC: ${total_nyc[latest]:.0f}", cs.RED, dy=5, size=11, weight="bold", dot=False)
+cs.label_end(ax, latest, total[latest], f"U.S. average: ${total[latest]:.0f}", cs.GOLD, dy=-4, size=10.5, dot=False)
 cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, dot=False)
 cs.unit_on_top(ax, prefix="$")
-pct19 = 100 * (total[latest] / total[2019] - 1)
-cs.finish(fig, f"Thanksgiving dinner for 10 costs ${total[latest]:.0f}, {pct19:.0f}% more than in 2019",
+pct19 = 100 * (total_nyc[latest] / total_nyc[2019] - 1)
+cs.finish(fig, f"Thanksgiving dinner for 10 in NYC costs ${total_nyc[latest]:.0f}, {pct19:.0f}% more than in 2019",
           "Cost at October prices, as paid. Full menu: turkey, ham, sides, rolls, pumpkin pie and baking staples.",
-          SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png",
+          "BLS and BEA via FRED, American Farm Bureau Federation; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png",
           note=("How this improves on the Farm Bureau survey: we price the full expanded menu, not the "
                 "leaner classic list, using BLS national average shelf prices collected the same way every "
                 "October since 1995 rather than a volunteer spot-check, and we fill the turkey price BLS "
                 "stopped publishing in 2020 with a backtested machine-learning ensemble (about 8% "
-                "average October error)."))
+                "average October error). NYC prices scale the national prices by BEA's New York metro "
+                "price parity for goods, moved over time with the New York grocery CPI."))
 
 # 2. Indexes
 fig, ax = cs.figure()
@@ -251,7 +278,7 @@ cs.finish(fig, f"Since 2019, the dinner's price has risen {verdict} prices overa
 
 # 3. YoY contributions
 # Recent years, all nine items
-recent = contrib.loc[2015:]
+recent = contrib_nyc.loc[2015:]
 # Every item, each colored to suggest the food itself (continuing items keep their colors)
 FOOD_COLORS = {
     "Turkey": "#C8553D",          # roast-turkey red
@@ -290,12 +317,12 @@ from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
 ax.set_xticklabels([f"'{y % 100:02d}" for y in recent.index])
 ax.set_yticks([-5, 0, 5, 10])
-ax.set_ylim(-7.5, 13.5)
+ax.set_ylim(min(-7.5, neg.min() * 1.1), max(13.5, pos.max() * 1.08))
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
 cs.finish(fig, "Turkey drives most swings in the dinner's cost",
-          "Change in the cost of a dinner for 10 vs. the previous October",
-          "BLS via FRED; turkey since 2020 is a model estimate", OUT / "3_contributions.png")
+          "Change in the cost of a dinner for 10 in NYC vs. the previous October",
+          "BLS and BEA via FRED; turkey since 2020 is a model estimate", OUT / "3_contributions.png")
 
 # ---------------- Console report ----------------
 pd.set_option("display.width", 160)

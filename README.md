@@ -15,9 +15,10 @@ backtested time-series and machine-learning models.
   and the middle three fifths, 2025 is the highest share since at least 1995.
 - **The poorest gained nothing.** Before-tax income left after essentials stayed at about
   -$5,000 a year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
-- **The dinner costs $96 and rose a bit less than inflation.** The full dinner for 10 is
-  $96.18 in 2026 (about $9.60 a person), up 28% from 2019, vs +31% for overall prices and
-  +33% for groceries. It fell $0.68 from 2025, mostly on cheaper eggs, ham and butter.
+- **The dinner costs $108 in New York City ($96 nationally) and rose a bit less than
+  inflation.** The full dinner for 10 is $107.53 at NYC prices in 2026 ($96.18 at U.S.
+  average prices, about $9.60 a person), up 28% nationally from 2019, vs +31% for overall
+  prices and +33% for groceries. It fell $0.68 from 2025, mostly on cheaper eggs, ham and butter.
 - **After essentials, the dinner takes a bigger bite for the bottom four income fifths.**
   For the lowest fifth it is 29.8% of a week's non-essential spending, vs 28.9% in 2019;
   for the second, 20.7% vs 18.8%. For the top fifth it is unchanged at 5.0%.
@@ -44,7 +45,7 @@ charts look the same on any machine.
 | Script | What it does | Main outputs |
 |---|---|---|
 | `turkey_price_ml_modeling.py` | Nowcasts the discontinued retail turkey price (ML and time-series ensemble, backtested) | `turkey_price_nowcast.csv`, `turkey_price_model_metrics.csv`, charts 8-9 |
-| `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
+| `build_index.py` | Prices the dinner each October (U.S. and NYC), index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, `item_costs_nyc.csv`, `nyc_item_prices_2026.csv`, charts 1-3 |
 | `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
 | `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, `week_of_spending.csv`, charts 4-5 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
@@ -94,6 +95,16 @@ income: hours of work, share of income, and income left after essentials.
   fruits and vegetables, or dairy. FRED only has these broad components, so this misses
   item-specific swings. The Farm Bureau does not publish its green bean price; the
   frozen-pea price is used. Ham is 3 lb boneless.
+- **New York City prices (charts 1 and 3):** BLS does not publish average food prices for
+  the New York metro, so NYC prices are the national prices times an NYC price factor:
+  BEA's Regional Price Parity for goods in the New York-Newark-Jersey City metro (110.3 in
+  2024, i.e. 10.3% above the U.S.), moved over time with the ratio of the New York metro
+  food-at-home CPI to the U.S. one. The factor ranges from 1.08 to 1.14 since 1995 (1.12 in
+  2026). It is likely an underestimate for Manhattan: the parity covers the whole metro,
+  including suburbs, and all goods rather than groceries. `nyc_item_prices_2026.csv` lists
+  the estimate item by item so it can be checked against real NYC store prices. The
+  affordability charts (4-7) stay on national prices because they compare the dinner
+  with national incomes and spending.
 - **Why the full menu:** an earlier nine-item basket came to $61 in 2026, in line with the
   Farm Bureau's $58.63 "classic" menu, but both are spare (one dozen rolls and one pound of
   peas for ten people, no second main dish). The full menu ($96 in 2026) is closer to what
