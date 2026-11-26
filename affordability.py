@@ -12,9 +12,6 @@ Run build_index.py first. This compares the dinner's cost with:
 from pathlib import Path
 
 import pandas as pd
-import matplotlib
-
-matplotlib.use("Agg")
 
 ROOT = Path(__file__).parent
 DATA, OUT = ROOT / "data", ROOT / "output"
@@ -70,18 +67,3 @@ for col in ["hours_of_work", "pct_of_median_hh_week", "per_guest_pct_of_daily_dp
           f"best year {x.idxmin()}")
 print("\nEssentials per person, Q3 ($/yr):")
 print(ess_pc.loc[[2019, 2022, 2025, 2026]].round(0).to_string())
-
-# ---------- Charts ----------
-import chart_style as cs
-
-fig, ax = cs.figure()
-e = out.essentials_share_of_dpi.dropna()
-ax.plot(e.index, e, color=cs.BLUE)
-ax.set_ylim(30, 50)
-ax.set_yticks([30, 35, 40, 45, 50])
-cs.baseline(ax, 30)
-cs.unit_on_top(ax, suffix="%")
-cs.finish(fig, "In national totals, essentials look flat",
-          "Housing, groceries, health care and energy, as a share of disposable income",
-          "BEA via FRED", OUT / "5_essentials_share.png",
-          note="National totals include health care paid by employers and government; household budgets are in by_income.py and deep_dive.py.")

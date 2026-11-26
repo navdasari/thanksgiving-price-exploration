@@ -45,7 +45,7 @@ font if installed, otherwise system fonts).
 |---|---|---|
 | `turkey_model.py` | Rebuilds the retail turkey price after Feb 2020 | `turkey_reconstruction.csv`, `turkey_model_metrics.csv`, charts 9-10 |
 | `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
-| `affordability.py` | Dinner vs national wages and income | `affordability.csv`, chart 5 |
+| `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
 | `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4 and 6 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 7-8 |
 
