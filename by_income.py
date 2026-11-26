@@ -85,6 +85,6 @@ axes[0].set_ylim(30, 65); cs.baseline(axes[0], 30)
 axes[1].set_ylim(0, 27); cs.baseline(axes[1], 0)
 cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], suffix="%")
 fig.subplots_adjust(right=0.87)
-cs.finish(fig, "Essentials take more of every budget; the dinner takes less",
+cs.finish(fig, "Essentials take more of every budget, leaving less room for the dinner",
           "By income fifth, 1995-2025. Essentials: shelter, utilities, groceries, health care.",
           "BLS Consumer Expenditure Survey via FRED", OUT / "6_by_income.png")

@@ -1,0 +1,29 @@
+      dinner_cost  hours_of_work  pct_of_median_hh_week  per_guest_pct_of_daily_dpi  per_guest_pct_of_daily_discretionary  essentials_share_of_dpi  afbf_hours_of_work
+year                                                                                                                                                                  
+2015        47.05           2.22                   4.33                        4.06                                  6.89                    40.89                2.36
+2016        48.00           2.21                   4.23                        4.05                                  6.90                    40.92                2.30
+2017        47.84           2.16                   4.07                        3.86                                  6.54                    40.51                2.21
+2018        46.43           2.03                   3.82                        3.56                                  5.98                    40.15                2.14
+2019        46.66           1.96                   3.53                        3.45                                  5.79                    40.08                2.06
+2020        48.02           1.93                   3.67                        3.34                                  5.41                    37.96                1.89
+2021        51.85           1.96                   3.81                        3.39                                  5.56                    39.02                2.02
+2022        63.55           2.27                   4.43                        4.00                                  6.91                    41.31                2.29
+2023        61.00           2.08                   3.93                        3.55                                  5.97                    40.03                2.09
+2024        59.32           1.95                   3.71                        3.31                                  5.57                    40.24                1.91
+2025        62.63           1.98                   3.72                        3.37                                  5.70                    40.61                1.74
+2026        61.31           1.87                    NaN                        3.14                                  5.37                    40.99                1.79
+
+Rank of 2026 among years with data (1 = most affordable):
+  hours_of_work                            2026: rank 1/32 (1995-2026); best year 2026
+  pct_of_median_hh_week                    2025: rank 4/31 (1995-2025); best year 2019
+  per_guest_pct_of_daily_dpi               2026: rank 1/32 (1995-2026); best year 2026
+  per_guest_pct_of_daily_discretionary     2026: rank 1/32 (1995-2026); best year 2026
+  afbf_hours_of_work                       2026: rank 2/12 (2015-2026); best year 2025
+
+Essentials per person, Q3 ($/yr):
+                  Housing & utilities  Food at home  Health care  Gasoline & energy goods
+observation_date                                                                         
+2019                           7797.0        3311.0       7513.0                   1058.0
+2022                           9415.0        4214.0       8485.0                   1514.0
+2025                          11200.0        4477.0      10564.0                   1200.0
+2026                          11705.0        4578.0      11154.0                   1506.0

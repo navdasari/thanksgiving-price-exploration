@@ -168,19 +168,22 @@ for name, g in panel.groupby("group", sort=False):
     out[name]["2013"] = round(g.loc[2013], 1); out[name]["2019"] = round(g.loc[2019], 1); out[name]["2025"] = round(g.loc[2025], 1)
 print(pd.DataFrame(out).T.to_string())
 
-# H2: turkey after 2019 is estimated. Re-run the dinner measures with the chicken-based proxy.
-alt = summary["basket_cost_chicken_proxy"]
-print("\n== H2. Dinner measures with turkey proxied by chicken instead of Farm Bureau turkey prices ==")
+# H2: turkey after Feb 2020 is a model estimate. Re-run the dinner measures with the two
+#     comparison turkey versions: Farm Bureau holiday price, and chicken ratio.
 low = panel[panel.group == "Income: lowest 20%"].set_index("year")
-d_alt = 100 * alt.reindex(low.index) / (low.income_pretax / 52)
-print(f"  Lowest 20%, dinner % of week's income: 2019 {d_alt[2019]:.1f}, 2022 {d_alt[2022]:.1f}, 2025 {d_alt[2025]:.1f}; "
-      f"2025 rank (1 = most affordable) {int(d_alt.rank().loc[2025])}/{len(d_alt)}")
-h_alt = alt / minwage.reindex(alt.index)
-print(f"  Hours at federal minimum: 2019 {h_alt[2019]:.2f}, 2026 {h_alt[2026]:.2f}; "
-      f"2026 rank (1 = most hours) {int(h_alt.rank(ascending=False).loc[2026])}/{h_alt.notna().sum()}")
-p_alt = 100 * alt / wage.decile1_weekly
-print(f"  % of 10th-pct weekly pay: 2019 {p_alt[2019]:.1f}, 2026 {p_alt[2026]:.1f}; "
-      f"2026 rank (1 = most affordable) {int(p_alt.rank().loc[2026])}/{p_alt.notna().sum()}")
+for col, label in [("basket_cost", "Model turkey (main)"), ("basket_cost_afbf_turkey", "Farm Bureau turkey"),
+                   ("basket_cost_chicken_proxy", "Chicken-ratio turkey")]:
+    alt = summary[col]
+    print(f"\n== H2. {label} ==")
+    d_alt = 100 * alt.reindex(low.index) / (low.income_pretax / 52)
+    print(f"  Lowest 20%, dinner % of week's income: 2019 {d_alt[2019]:.1f}, 2022 {d_alt[2022]:.1f}, 2025 {d_alt[2025]:.1f}; "
+          f"2025 rank (1 = most affordable) {int(d_alt.rank().loc[2025])}/{len(d_alt)}")
+    h_alt = alt / minwage.reindex(alt.index)
+    print(f"  Hours at federal minimum: 2019 {h_alt[2019]:.2f}, 2026 {h_alt[2026]:.2f}; "
+          f"2026 rank (1 = most hours) {int(h_alt.rank(ascending=False).loc[2026])}/{h_alt.notna().sum()}")
+    p_alt = 100 * alt / wage.decile1_weekly
+    print(f"  % of 10th-pct weekly pay: 2019 {p_alt[2019]:.1f}, 2026 {p_alt[2026]:.1f}; "
+          f"2026 rank (1 = most affordable) {int(p_alt.rank().loc[2026])}/{p_alt.notna().sum()}")
 
 # ---------------- Charts ----------------
 import chart_style as cs

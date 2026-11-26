@@ -1,0 +1,8 @@
+model,rmse_all_months_pct,mae_october_pct,mean_error_pct,worst_october_pct
+Combined (all models),8.54,8.26,-0.89,25.7
+Wholesale ratio,10.51,8.52,2.03,25.65
+Elastic net,8.56,8.55,-1.68,27.59
+Chicken ratio,10.39,8.76,-0.69,26.37
+Gradient boosting,9.09,8.99,-1.71,25.03
+Linear regression,9.43,9.41,-1.61,29.68
+Regression + AR(1) errors,9.35,9.49,-1.64,22.86

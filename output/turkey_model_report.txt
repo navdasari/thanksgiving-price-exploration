@@ -1,0 +1,55 @@
+== Backtest: rebuild up to 80 months after each origin from predictors only ==
+Origins: 2004-02-01, 2007-02-01, 2010-02-01, 2013-02-01; training from 1993-01-01; errors are prediction minus actual BLS price
+                           rmse_all_months_pct  mae_october_pct  mean_error_pct  worst_october_pct
+model                                                                                             
+Combined (all models)                     8.54             8.26           -0.89              25.70
+Wholesale ratio                          10.51             8.52            2.03              25.65
+Elastic net                               8.56             8.55           -1.68              27.59
+Chicken ratio                            10.39             8.76           -0.69              26.37
+Gradient boosting                         9.09             8.99           -1.71              25.03
+Linear regression                         9.43             9.41           -1.61              29.68
+Regression + AR(1) errors                 9.35             9.49           -1.64              22.86
+
+October absolute error (%) by years after origin:
+horizon_year                  1    2     3     4     5     6     7
+model                                                             
+Combined (all models)       9.3  6.4   7.8  10.2   8.4   7.1   9.7
+Wholesale ratio            10.0  4.8   9.1   9.0  10.3  10.0   6.3
+Elastic net                 9.1  6.7   7.7  11.9   9.3   7.2   9.0
+Chicken ratio               8.7  8.4   7.7  10.8   6.7   7.2  13.5
+Gradient boosting          10.5  5.4   9.5  10.8   7.8   9.1  11.2
+Linear regression           9.2  7.7   7.0  13.9  11.0   7.5  11.0
+Regression + AR(1) errors  10.0  8.8  10.5  12.1   9.5   6.0  10.5
+
+Diebold-Mariano tests, each model vs the combined model (squared error, Newey-West, 12 lags).
+Positive statistic = model worse than combined. p < 0.05 would be a real difference:
+                           dm_stat_vs_combined  p_value
+model                                                  
+Chicken ratio                            2.399    0.016
+Elastic net                              0.078    0.938
+Gradient boosting                        1.735    0.083
+Linear regression                        1.748    0.081
+Regression + AR(1) errors                2.070    0.038
+Wholesale ratio                          1.748    0.081
+
+Main estimate: Combined (all models)
+
+October reconstruction (BLS Oct 2019 actual: $1.601/lb):
+      main_$/lb  low_p10  high_p90  main_vs_2019_%  farm_bureau_vs_2019_%  chicken_ratio_vs_2019_%
+2020       1.66     1.54      1.84            3.78                  -6.78                     1.25
+2021       1.85     1.67      2.05           15.47                  15.34                    -2.40
+2022       2.21     1.97      2.46           37.77                  39.23                    19.38
+2023       2.11     1.93      2.43           31.81                  31.49                    23.42
+2024       1.88     1.68      2.13           17.30                  23.41                    27.33
+2025       2.12     1.95      2.32           32.63                   3.37                    31.53
+2026       2.15     2.08      2.42           34.54                  13.85                    29.83
+
+All models, October $/lb:
+      Chicken ratio  Wholesale ratio  Linear regression  Elastic net  Gradient boosting  Regression + AR(1) errors  Combined (all models)
+2020          1.621            1.606              1.681        1.688              1.663                      1.712                  1.661
+2021          1.563            1.915              1.943        1.924              1.869                      1.910                  1.849
+2022          1.911            2.866              2.190        2.191              1.925                      2.275                  2.206
+2023          1.976            2.443              2.053        2.089              2.060                      2.071                  2.110
+2024          2.039            1.847              1.771        1.775              1.917                      1.933                  1.878
+2025          2.106            2.274              2.052        2.047              2.012                      2.265                  2.123
+2026          2.079            2.529              2.002        2.042              2.137                      2.175                  2.154

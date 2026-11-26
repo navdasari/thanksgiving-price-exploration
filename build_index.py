@@ -4,8 +4,11 @@ Prices are taken in October of each year, the last month BLS publishes before
 Thanksgiving (November data comes out in mid-December).
 
 Data patches (flagged in the output):
-  * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. After Oct 2019 the
-    price follows the Farm Bureau turkey price (chicken-based proxy kept for comparison).
+  * Turkey: BLS stopped publishing APU0000706311 after Feb 2020. From March 2020 on,
+    the price is the model reconstruction from turkey_model.py (run it first). Two
+    comparison versions are kept: the 2019 BLS price carried forward with the Farm
+    Bureau's holiday turkey price, and the whole-chicken price times the Feb 2020
+    turkey/chicken ratio.
   * October 2013 (turkey) and October 2025 (all items): not published because of
     government shutdowns; the Sep/Nov average is used.
   * Butter: no BLS butter average price exists from May 2012 to Mar 2018. The gap
@@ -45,9 +48,10 @@ BASKET = {
 }
 
 # ---------------- Patch turkey ----------------
-# Main version: carry the last BLS October turkey price (2019) forward with the
-# year-to-year change in the Farm Bureau's 16-lb turkey price.
-# Comparison version: whole-chicken price times the Feb 2020 turkey/chicken ratio.
+# Main version: model reconstruction of the BLS series (turkey_model.py).
+# Comparison versions: (a) the last BLS October price (2019) carried forward with the
+# year-to-year change in the Farm Bureau's 16-lb holiday turkey price; (b) whole-chicken
+# price times the Feb 2020 turkey/chicken ratio.
 AFBF_TURKEY = {2019: 20.80, 2020: 19.39, 2021: 23.99, 2022: 28.96, 2023: 27.35,
                2024: 25.67, 2025: 21.50, 2026: 23.68}
 turkey, chicken = load("APU0000706311").dropna(), load("APU0000706111")
@@ -58,7 +62,9 @@ bls_oct_2019 = turkey[pd.Timestamp("2019-10-01")]
 turkey_afbf = pd.concat([turkey, pd.Series(
     {pd.Timestamp(f"{y}-10-01"): bls_oct_2019 * v / AFBF_TURKEY[2019]
      for y, v in AFBF_TURKEY.items() if y > 2019})])
-turkey_flag = pd.Series(turkey_afbf.index > last, index=turkey_afbf.index)
+rec = pd.read_csv(ROOT / "output" / "turkey_reconstruction.csv", parse_dates=["month"], index_col="month")
+turkey_model = pd.concat([turkey, rec.loc[rec.index > last, "main_estimate"]])
+turkey_flag = pd.Series(turkey_model.index > last, index=turkey_model.index)
 
 # ---------------- Patch butter ----------------
 b_old, b_new, dairy = load("APU0000710111").dropna(), load("APU0000FS1101").dropna(), load("CUUR0000SEFJ")
@@ -90,13 +96,15 @@ def build_prices(turkey_series):
     return df.dropna()  # milk starts in 1995, so the index starts in 1995
 
 
-prices = build_prices(turkey_afbf)
+prices = build_prices(turkey_model)
+prices_afbf = build_prices(turkey_afbf)
 prices_chicken = build_prices(turkey_chicken)
 
 qty = pd.Series({k: v[1] for k, v in BASKET.items()})
 cost = prices * qty                 # dollars per item
 total = cost.sum(axis=1)
 total_chicken = (prices_chicken * qty).sum(axis=1)
+total_afbf = (prices_afbf * qty).sum(axis=1)
 
 # ---------------- Deflators ----------------
 def oct_series(sid):
@@ -130,6 +138,7 @@ afbf = pd.Series(AFBF)
 # ---------------- Save tables ----------------
 summary = pd.DataFrame({
     "basket_cost": total.round(2),
+    "basket_cost_afbf_turkey": total_afbf.round(2),
     "basket_cost_chicken_proxy": total_chicken.round(2),
     f"basket_cost_{latest}_dollars": real_total.round(2),
     "laspeyres_2019=100": laspeyres.round(1),
@@ -156,34 +165,34 @@ SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 # 1. Nominal cost and cost relative to overall prices, with the Farm Bureau benchmark
 fig, ax = cs.figure()
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
-ax.text(2019.7, 31.5, "Turkey price from\nFarm Bureau survey", fontsize=8.5, color=cs.MUTED, style="italic")
+ax.text(2019.7, 31.5, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
 ax.plot(real_total.index, real_total, color=cs.BLUE)
 ax.plot(total.index, total, color=cs.RED)
-ax.plot(total_chicken.loc[2019:].index, total_chicken.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
+ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
 ax.plot(afbf.index, afbf, color=cs.GRAY, lw=2, marker="o", ms=4)
 ax.set_xlim(1994, latest + 1)
 ax.set_ylim(25, 77)
 cs.baseline(ax, 25)
 ax.text(1996, 69.5, f"In {latest} dollars", color=cs.BLUE, fontsize=11, fontweight="bold")
 ax.text(2004, 29.5, "As paid", color=cs.RED, fontsize=11, fontweight="bold")
-cs.label_end(ax, latest, total_chicken[latest], "Turkey via\nchicken", cs.RED, dy=2.5, weight="normal", size=9)
-cs.label_end(ax, latest, afbf[latest], "Farm\nBureau", cs.GRAY, dy=3.5)
+cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-6, weight="normal", size=9)
+cs.label_end(ax, latest, afbf[latest], "Farm Bureau\nsurvey", cs.GRAY, dy=-1.5)
 cs.unit_on_top(ax, prefix="$")
-cs.finish(fig, "Thanksgiving dinner costs more, but rose less than other prices",
+cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019, in step with prices overall",
           "Cost of a dinner for 10 at October prices, as paid and in 2026 dollars",
-          SRC_BLS, OUT / "1_dinner_cost.png")
+          SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png")
 
 # 2. Indexes
 fig, ax = cs.figure()
-lines = [(cpi_food_idx, "Groceries", cs.GREEN, 6), (cpi_all_idx, "All prices", cs.GRAY, -1),
-         (laspeyres, "Dinner", cs.RED, 1.5), (geometric, "Dinner, w/ subst.", cs.GOLD, -6)]
+lines = [(cpi_food_idx, "Groceries", cs.GREEN, 7), (cpi_all_idx, "All prices", cs.GRAY, -2.5),
+         (laspeyres, "Dinner", cs.RED, 2.5), (geometric, "Dinner, w/ subst.", cs.GOLD, -8)]
 for s, lab, c, dy in lines:
     ax.plot(s.index, s, color=c, lw=2.2 if c == cs.GOLD else 3)
     cs.label_end(ax, latest, s[latest], lab, c, dy=dy, size=9.5)
 ax.set_xlim(1994, latest + 1)
 cs.baseline(ax, 100)
 cs.unit_on_top(ax)
-cs.finish(fig, "Since 2019, the dinner's price rose less than prices overall",
+cs.finish(fig, "Since 2019, the dinner's price has risen in step with prices overall",
           "Price indexes, October 2019 = 100. Groceries and all prices are CPI.",
           "BLS via FRED, American Farm Bureau Federation", OUT / "2_indexes.png")
 
@@ -217,7 +226,7 @@ ax.set_yticks([-5, 0, 5, 10])
 ax.set_ylim(-7.5, 13.5)
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
-cs.finish(fig, "Turkey drives nearly every swing in the dinner's cost",
+cs.finish(fig, "Turkey drives most swings in the dinner's cost",
           "Change in the cost of a dinner for 10 vs. the previous October",
           "BLS via FRED, American Farm Bureau Federation", OUT / "3_contributions.png")
 

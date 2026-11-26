@@ -89,7 +89,7 @@ ax.set_ylim(75, 155)
 fig.subplots_adjust(right=0.8)
 cs.baseline(ax, 100)
 cs.unit_on_top(ax)
-cs.finish(fig, "Measured against income, the dinner is the most affordable in decades",
+cs.finish(fig, "Measured against average incomes, the dinner is as affordable as it has been since 1995",
           "Cost of a Thanksgiving dinner for 10 relative to each yardstick, 2019 = 100 (lower = more affordable)",
           "BLS, BEA and Census via FRED", OUT / "4_affordability.png")
 
