@@ -1,6 +1,6 @@
-# Thanksgiving Dinner Price Index
+# Thanksgiving Dinner Price Exploration
 
-The cost of a full Thanksgiving dinner for 10, priced every October from 1995 to 2026 with
+Estimating the cost of a full Thanksgiving dinner for 10, priced every October from 1995 to 2026 with
 BLS average retail prices (via FRED) and compared with prices, wages and household budgets.
 The menu builds on the American Farm Bureau Federation's: turkey, potatoes, sweet potatoes,
 stuffing, rolls, cranberries, peas, green beans, a veggie tray, pumpkin pie with whipped
