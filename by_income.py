@@ -126,7 +126,7 @@ fig.legend(handles=[Patch(color=ESS_C, label="Essentials (shelter, utilities, gr
                     Patch(color=OTH_C, label="Everything else")],
            loc="upper left", bbox_to_anchor=(0.1, 0.83), ncol=3, handlelength=1.2, columnspacing=1.8)
 d = now.loc["Lowest 20%"]
-cs.finish(fig, f"For the poorest fifth, the dinner takes {d.dinner_pct_of_nonessential:.0f}% of what's left after essentials",
+cs.finish(fig, f"For the poorest fifth, Thanksgiving dinner takes {d.dinner_pct_of_nonessential:.0f}% of what's left after essentials",
           f"A week of household spending, to scale. The same ${d.dinner_cost:.0f} dinner is {d.dinner_pct_of_week:.1f}% of the lowest fifth's week "
           f"and {now.loc['Highest 20%'].dinner_pct_of_week:.1f}% of the top fifth's.",
           "BLS Consumer Expenditure Survey and average prices via FRED", OUT / "5_week_of_spending.png",
