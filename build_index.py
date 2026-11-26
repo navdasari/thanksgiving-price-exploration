@@ -319,7 +319,7 @@ cs.finish_geo("us", fig, f"Since 2019, the dinner's price has risen {verdict} pr
 
 # 3. YoY contributions
 # Recent years, all nine items
-recent = contrib_nyc.loc[2015:]
+recent = contrib.loc[2015:]
 # Every item, each colored to suggest the food itself (continuing items keep their colors)
 FOOD_COLORS = {
     "Turkey": "#C8553D",          # roast-turkey red
@@ -364,10 +364,9 @@ ax.set_yticks(ticks)
 ax.set_ylim(lo, hi)
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: f"+${v:g}" if v == max(ticks) else ("0" if v == 0 else f"{v:+g}")))
-cs.finish_geo("nyc", fig, "Turkey drives most swings in the dinner's cost",
-          "Change in the cost of a dinner for 10 in NYC vs. the previous year's Thanksgiving",
-          "New York Post NYC price survey; BLS and BEA via FRED", OUT / "3_contributions.png",
-          note="2026 changes come from the Post's 2025-to-2026 NYC store prices; earlier years follow BLS price histories.")
+cs.finish_geo("us", fig, "Turkey drives most swings in the dinner's cost",
+          "Change in the cost of a dinner for 10 at U.S. average prices vs. the previous October",
+          "BLS via FRED; turkey since 2020 is a model estimate", OUT / "3_contributions.png")
 
 # ---------------- Console report ----------------
 pd.set_option("display.width", 160)

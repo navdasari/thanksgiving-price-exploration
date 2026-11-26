@@ -16,7 +16,7 @@ backtested time-series and machine-learning models.
   and the middle three fifths, 2025 is the highest share since at least 1995.
 - **The poorest gained nothing.** Before-tax income left after essentials stayed at about
   -$5,000 a year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
-- **In New York City the dinner costs $168 (charts 1 and 3).** Pricing 11 of the 18 items
+- **In New York City the dinner costs $168 (chart 1).** Pricing 11 of the 18 items
   from the New York Post's survey of NYC supermarkets puts the dinner for 10 at $167.77 in
   2026, about 1.9 times the U.S. average. It was $141.28 in 2025; the 19% one-year jump
   comes from the Post's store prices (milk +50%, cider +75%, pumpkin +43%, turkey +18%),
@@ -28,11 +28,9 @@ backtested time-series and machine-learning models.
 - **After essentials, the dinner takes a bigger bite for every income fifth.** For the
   lowest fifth it is 26.9% of a week's non-essential spending, vs 25.7% in 2019; for the
   second, 18.6% vs 16.7%; for the top fifth, 4.5% vs 4.4%.
-- **In NYC the dinner takes 9.9 hours of minimum-wage work (chart 7).** At New York City's
-  $17 minimum (employers with 11+ workers), the NYC-priced dinner takes 9.9 hours in 2026,
-  up from 7.3 in 2019 and 8.6 in 2025, but below the 12-16 hours of the years before the
-  city's raises began in 2017. At the federal $7.25, unchanged since 2009, the U.S.-priced
-  dinner takes 12.1 hours, the most in 32 years.
+- **Minimum-wage workers lost ground (chart 7).** At $7.25 since 2009, the federal minimum
+  buys 64% of what it did. The U.S.-priced dinner takes 12.1 hours of work, vs 9.2 in 2019,
+  the most in 32 years.
 - **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
   millions of households just before Thanksgiving.
 
@@ -64,11 +62,11 @@ Each chart is labeled NYC or National above its headline.
 |---|---|---|
 | 1 Dinner cost | NYC, with U.S. average for comparison | New York Post NYC survey + BLS |
 | 2 Price indexes | National | BLS U.S. averages |
-| 3 Item contributions | NYC | New York Post NYC survey + BLS |
+| 3 Item contributions | National | BLS U.S. averages |
 | 4 Essentials, bottom vs top half | National | (household spending, no dinner) |
 | 5 A week of spending by income fifth | National | BLS U.S. averages |
 | 6 Household types | National | (household spending, no dinner) |
-| 7 Hours at the minimum wage | NYC | New York Post NYC survey + BLS; NYC minimum wage |
+| 7 Hours at the minimum wage | National | BLS U.S. averages; federal minimum wage |
 | 8-9 Turkey price model | National | BLS U.S. turkey price |
 
 ## Nowcasting the turkey price: ML and time-series ensemble (`turkey_price_ml_modeling.py`)
@@ -118,7 +116,7 @@ income: hours of work, share of income, and income left after essentials.
   frozen-pea price is used. Apple cider (1 gallon) starts from $6.99, the median of
   November 2026 grocery listings (Costco $6.99 and $5.51, Meijer $7.49, Price Chopper
   $6.99), and moves with the CPI for nonalcoholic beverages.
-- **New York City prices (charts 1 and 3):** 11 items use the New York Post's November 2025
+- **New York City prices (chart 1):** 11 items use the New York Post's November 2025
   and 2026 prices from six NYC supermarkets (`data/nyc_post_prices.csv`, total $160.30 and
   $184.43), scaled to this menu's quantities: turkey (Bell & Evans, per lb x 16), yams (x 3
   lb), Stove Top (x 14/6 for 14 oz), crescent rolls (x 1.5 for a dozen), cranberry sauce,
@@ -133,10 +131,7 @@ income: hours of work, share of income, and income left after essentials.
   not used. `nyc_item_sources.csv` shows each item's source and compares the Post's
   2025-2026 change with the BLS index change: the Post's are far larger (e.g. milk +50% vs
   +1%), so treat the one-year jump with care. The Post's turkey is a premium brand ($3.99/lb).
-  Chart 7 uses NYC's minimum wage: the higher of the federal and New York State rates
-  (FRED), with NYC's 2017-2023 rates for employers with 11+ workers from NY Labor Law 652
-  ($11, $13, then $15). The other affordability charts (4-6) stay on national prices and
-  incomes.
+  Charts 2-9 use national prices, incomes and the federal minimum wage.
 - **Why the full menu:** an earlier nine-item basket came to $61 in 2026, in line with the
   Farm Bureau's $58.63 "classic" menu, but both are spare (one dozen rolls and one pound of
   peas for ten people). The full menu ($87 in 2026) is closer to what a real Thanksgiving
