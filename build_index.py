@@ -181,9 +181,73 @@ AFBF = {2015: 50.11, 2016: 49.87, 2017: 49.12, 2018: 48.90, 2019: 48.91, 2020: 4
         2021: 53.31, 2022: 64.05, 2023: 61.17, 2024: 58.08, 2025: 55.18, 2026: 58.63}
 afbf = pd.Series(AFBF)
 
+# ---------------- New York City prices ----------------
+# Items on the New York Post's 2025/2026 NYC Thanksgiving price survey (data/nyc_post_prices.csv)
+# use those NYC shelf prices, scaled to our quantities. 2026 = the Post's 2026 price. Earlier
+# years start from the Post's 2025 price and move back with the item's own BLS price history
+# (turkey, milk, butter, flour) or its CPI item group, using October values.
+# Items not on the Post's list = national price x an NYC factor: BEA's Regional Price Parity
+# for goods in the New York-Newark-Jersey City metro (2024), moved over time with the ratio of
+# the New York metro to U.S. food-at-home CPI.
+post = pd.read_csv(DATA / "nyc_post_prices.csv").set_index("post_item")
+POST_MAP = {  # our item: (Post item, Post units needed for our quantity, index used to go back in time)
+    "Turkey":          ("Bell & Evans Turkey (20 lbs)", 16 / 20, "TURKEY"),
+    "Sweet potatoes":  ("Yams (per lb)", 3, "CUUR0000SAF113"),
+    "Stuffing mix":    ("Stove Top Stuffing", 14 / 6, "CUUR0000SAF111"),
+    "Dinner rolls":    ("Pillsbury Crescent Rolls", 12 / 8, "CUUR0000SAF111"),
+    "Cranberries":     ("Cranberry Sauce (can)", 1, "CUUR0000SAF113"),
+    "Veggie tray":     ("Baby Peeled Carrots (1 lb)", 1, "CUUR0000SAF113"),
+    "Pumpkin pie mix": ("Libby's 100% Pure Pumpkin", 2, "CUUR0000SAF113"),
+    "Apple cider":     ("Apple Cider (64 fl oz)", 2, "CUUR0000SAF114"),
+    "Milk":            ("Whole Milk (half gal Farmland)", 2, "APU0000709112"),
+    "Butter":          ("Land O'Lakes Butter (lb)", 1, "BUTTER"),
+    "Flour":           ("Hecker's Flour (5 lb)", 1 / 5, "APU0000701111"),
+}
+POST_BASE, POST_LATEST = 2025, 2026
+
+
+def october_index(sid):
+    series = {"TURKEY": turkey_model, "BUTTER": butter}
+    s_ = fill_oct_2025(series[sid] if sid in series else load(sid))
+    s_ = s_[s_.index.month == MONTH]
+    s_.index = s_.index.year
+    return s_.reindex(total.index)
+
+
+NYC_ANCHOR_YEAR = 2024
+rpp_goods = load("RPPGOOD35620")
+rpp_goods.index = rpp_goods.index.year
+ny_us = (load("CUURA101SAF11") / load("CUUR0000SAF11")).dropna()
+ny_us = ny_us.groupby(ny_us.index.year).mean()
+nyc_factor = (ny_us / ny_us[NYC_ANCHOR_YEAR] * rpp_goods[NYC_ANCHOR_YEAR] / 100).reindex(total.index)
+
+cost_nyc = cost.mul(nyc_factor, axis=0)          # default: national x NYC factor
+post_check = []
+for item, (post_item, units, sid) in POST_MAP.items():
+    idx = october_index(sid)
+    base = post.loc[post_item, "price_2025"] * units
+    series_ = base * idx / idx[POST_BASE]
+    series_[POST_LATEST] = post.loc[post_item, "price_2026"] * units
+    cost_nyc[item] = series_
+    post_check.append({"item": item, "post_item": post_item, "units": round(units, 3),
+                       "nyc_2025": round(base, 2), "nyc_2026": round(series_[POST_LATEST], 2),
+                       "post_change_%": round(100 * (post.loc[post_item, "price_2026"] / post.loc[post_item, "price_2025"] - 1), 1),
+                       "index_change_%": round(100 * (idx[POST_LATEST] / idx[POST_BASE] - 1), 1),
+                       "national_2026": round(cost.loc[POST_LATEST, item], 2)})
+for item in BASKET:
+    if item not in POST_MAP:
+        post_check.append({"item": item, "post_item": "(not on Post list: national x NYC factor)", "units": None,
+                           "nyc_2025": round(cost_nyc.loc[POST_BASE, item], 2), "nyc_2026": round(cost_nyc.loc[POST_LATEST, item], 2),
+                           "post_change_%": None, "index_change_%": None,
+                           "national_2026": round(cost.loc[POST_LATEST, item], 2)})
+total_nyc = cost_nyc.sum(axis=1)
+contrib_nyc = cost_nyc.diff().dropna()
+
 # ---------------- Save tables ----------------
 summary = pd.DataFrame({
     "basket_cost": total.round(2),
+    "basket_cost_nyc": total_nyc.round(2),
+    "nyc_price_factor": nyc_factor.round(4),
     "basket_cost_afbf_turkey": total_afbf.round(2),
     "basket_cost_chicken_proxy": total_chicken.round(2),
     f"basket_cost_{latest}_dollars": real_total.round(2),
@@ -202,40 +266,40 @@ summary["butter_estimated"] = summary["butter_estimated"].astype("boolean").fill
 summary.to_csv(OUT / "index_summary.csv")
 cost.round(2).to_csv(OUT / "item_costs.csv")
 contrib.round(2).to_csv(OUT / "yoy_contributions.csv")
+cost_nyc.round(2).to_csv(OUT / "item_costs_nyc.csv")
+pd.DataFrame(post_check).to_csv(OUT / "nyc_item_sources.csv", index=False)
 
 # ---------------- Charts ----------------
 import chart_style as cs
 
 SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 
-# 1. Cost as paid, with the Farm Bureau benchmark (comparison with overall prices is chart 2)
+# 1. NYC cost as paid, with the U.S. average and the Farm Bureau benchmark
 FLOOR = 0
 fig, ax = cs.figure()
 fig.subplots_adjust(right=0.82)
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
 ax.text(2019.7, 8, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
-ax.set_ylim(FLOOR, 110)
-cs.soft_fill(ax, total.index, total, cs.RED, floor=FLOOR)
-ax.plot(total.index, total, color=cs.RED)
-cs.end_dot(ax, latest, total[latest], cs.RED)
-ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
+ax.set_ylim(FLOOR, 20 * np.ceil(total_nyc.max() * 1.12 / 20))
+ax.plot(total_nyc.index, total_nyc, color=cs.RED)
+ax.plot(total.index, total, color=cs.GOLD, lw=2.4)
 ax.plot(afbf.index, afbf, color=cs.DARK, lw=1.8, marker="o", ms=4.5, markeredgecolor=cs.BG)
 ax.set_xlim(1994, latest + 1)
 cs.baseline(ax, FLOOR)
-ax.text(2012.3, afbf[2015] - 15, "Farm Bureau\nclassic menu", color=cs.DARK, fontsize=10, fontweight="semibold")
-cs.label_end(ax, latest, total[latest], f"Typical Thanksgiving\ndinner: ${total[latest]:.0f}", cs.RED, dy=6, size=11, weight="bold", dot=False)
-cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-3, weight="normal", size=9.5, dot=False)
+ax.text(2012.3, afbf[2015] - 20, "Farm Bureau\nclassic menu", color=cs.DARK, fontsize=10, fontweight="semibold")
+cs.label_end(ax, latest, total_nyc[latest], f"Typical Thanksgiving\ndinner, NYC: ${total_nyc[latest]:.0f}", cs.RED, dy=0, size=11, weight="bold", dot=False)
+cs.label_end(ax, latest, total[latest], f"U.S. average: ${total[latest]:.0f}", cs.GOLD, dy=4, size=10.5, dot=False)
 cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, dot=False)
 cs.unit_on_top(ax, prefix="$")
-pct19 = 100 * (total[latest] / total[2019] - 1)
-cs.finish(fig, f"Thanksgiving dinner for 10 costs ${total[latest]:.0f}, {pct19:.0f}% more than in 2019",
-          "Cost at October prices, as paid. Full menu: turkey, sides, rolls, pumpkin pie, apple cider and baking staples.",
-          SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png",
-          note=("How this improves on the Farm Bureau survey: we price a fuller menu than the Farm "
-                "Bureau's lean classic list, using BLS national average shelf prices collected the same way every "
-                "October since 1995 rather than a volunteer spot-check, and we fill the turkey price BLS "
-                "stopped publishing in 2020 with a backtested machine-learning ensemble (about 8% "
-                "average October error)."))
+pct19 = 100 * (total_nyc[latest] / total_nyc[2019] - 1)
+cs.finish(fig, f"Thanksgiving dinner for 10 in NYC costs ${total_nyc[latest]:.0f}, {pct19:.0f}% more than in 2019",
+          "Cost at Thanksgiving prices, as paid. Full menu: turkey, sides, rolls, pumpkin pie, apple cider and baking staples.",
+          "New York Post NYC price survey; BLS and BEA via FRED; American Farm Bureau Federation", OUT / "1_dinner_cost.png",
+          note=("NYC prices: 11 of 18 items use the New York Post's 2025 and 2026 NYC supermarket prices, scaled to "
+                "this menu; earlier years move back from 2025 with each item's BLS price history or CPI group. "
+                "Other items are U.S. average prices x BEA's New York metro price parity. The 2025-2026 jump "
+                "reflects the Post's store prices, which rose much faster than BLS indexes for the same items. "
+                "U.S. line: BLS national average prices; turkey since 2020 from a backtested machine-learning model."))
 
 # 2. Indexes
 fig, ax = cs.figure()
@@ -255,7 +319,7 @@ cs.finish(fig, f"Since 2019, the dinner's price has risen {verdict} prices overa
 
 # 3. YoY contributions
 # Recent years, all nine items
-recent = contrib.loc[2015:]
+recent = contrib_nyc.loc[2015:]
 # Every item, each colored to suggest the food itself (continuing items keep their colors)
 FOOD_COLORS = {
     "Turkey": "#C8553D",          # roast-turkey red
@@ -293,13 +357,17 @@ ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, c
 from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
 ax.set_xticklabels([f"'{y % 100:02d}" for y in recent.index])
-ax.set_yticks([-5, 0, 5, 10])
-ax.set_ylim(min(-7.5, neg.min() * 1.1), max(13.5, pos.max() * 1.08))
+lo, hi = min(-7.5, neg.min() * 1.1), max(13.5, pos.max() * 1.08)
+step = 5 if hi < 25 else 10
+ticks = [t for t in range(-100, 101, step) if lo <= t <= hi]
+ax.set_yticks(ticks)
+ax.set_ylim(lo, hi)
 ax.yaxis.set_major_formatter(FuncFormatter(
-    lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
+    lambda v, _: f"+${v:g}" if v == max(ticks) else ("0" if v == 0 else f"{v:+g}")))
 cs.finish(fig, "Turkey drives most swings in the dinner's cost",
-          "Change in the cost of a dinner for 10 vs. the previous October",
-          "BLS via FRED; turkey since 2020 is a model estimate", OUT / "3_contributions.png")
+          "Change in the cost of a dinner for 10 in NYC vs. the previous year's Thanksgiving",
+          "New York Post NYC price survey; BLS and BEA via FRED", OUT / "3_contributions.png",
+          note="2026 changes come from the Post's 2025-to-2026 NYC store prices; earlier years follow BLS price histories.")
 
 # ---------------- Console report ----------------
 pd.set_option("display.width", 160)
@@ -308,7 +376,7 @@ print(f"\nLatest ({latest}) item costs:\n{cost.loc[latest].round(2).to_string()}
 print(f"\n{latest} vs prior year contributions ($):\n{contrib.loc[latest].round(2).sort_values().to_string()}")
 print(f"\nBase-{BASE} expenditure shares:\n{shares.round(3).to_string()}")
 c = pd.concat([total, afbf], axis=1, keys=["ours", "afbf"]).dropna().pct_change().dropna()
-print("\nNote: from 2020 on, turkey follows the Farm Bureau's own turkey price, so the "
-      "correlation below is partly built in.")
+print("\nNote: from 2020 on, turkey is a model estimate built without Farm Bureau data, so the "
+      "correlation below is an independent check.")
 print(f"\nCorrelation of YoY % changes, ours vs Farm Bureau ({c.index.min()}-{c.index.max()}): "
       f"{c.corr().iloc[0,1]:.2f}")

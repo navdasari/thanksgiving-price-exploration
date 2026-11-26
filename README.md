@@ -16,7 +16,12 @@ backtested time-series and machine-learning models.
   and the middle three fifths, 2025 is the highest share since at least 1995.
 - **The poorest gained nothing.** Before-tax income left after essentials stayed at about
   -$5,000 a year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
-- **The dinner costs $87 and rose in step with inflation.** The full dinner for 10 is
+- **In New York City the dinner costs $168 (charts 1 and 3).** Pricing 11 of the 18 items
+  from the New York Post's survey of NYC supermarkets puts the dinner for 10 at $167.77 in
+  2026, about 1.9 times the U.S. average. It was $141.28 in 2025; the 19% one-year jump
+  comes from the Post's store prices (milk +50%, cider +75%, pumpkin +43%, turkey +18%),
+  which rose much faster than BLS price indexes for the same items.
+- **Nationally the dinner costs $87 and rose in step with inflation.** The full dinner for 10 is
   $87.39 in 2026 (about $8.74 a person), up 31% from 2019, the same as overall prices
   (+31%) and a little less than groceries (+33%). It rose $0.18 from 2025: turkey added
   $0.49 while cheaper eggs and butter took off $1.42.
@@ -45,7 +50,7 @@ charts look the same on any machine.
 | Script | What it does | Main outputs |
 |---|---|---|
 | `turkey_price_ml_modeling.py` | Nowcasts the discontinued retail turkey price (ML and time-series ensemble, backtested) | `turkey_price_nowcast.csv`, `turkey_price_model_metrics.csv`, charts 8-9 |
-| `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
+| `build_index.py` | Prices the dinner each October (U.S. and NYC), index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, `item_costs_nyc.csv`, `nyc_item_sources.csv`, charts 1-3 |
 | `affordability.py` | Dinner vs national wages and income | `affordability.csv` |
 | `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, `week_of_spending.csv`, charts 4-5 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
@@ -97,6 +102,22 @@ income: hours of work, share of income, and income left after essentials.
   frozen-pea price is used. Apple cider (1 gallon) starts from $6.99, the median of
   November 2026 grocery listings (Costco $6.99 and $5.51, Meijer $7.49, Price Chopper
   $6.99), and moves with the CPI for nonalcoholic beverages.
+- **New York City prices (charts 1 and 3):** 11 items use the New York Post's November 2025
+  and 2026 prices from six NYC supermarkets (`data/nyc_post_prices.csv`, total $160.30 and
+  $184.43), scaled to this menu's quantities: turkey (Bell & Evans, per lb x 16), yams (x 3
+  lb), Stove Top (x 14/6 for 14 oz), crescent rolls (x 1.5 for a dozen), cranberry sauce,
+  baby carrots (veggie tray), Libby's pumpkin (x 2 for 30 oz), apple cider (x 2 for a
+  gallon), whole milk (x 2 for a gallon), butter and flour (x 1/5). 2026 uses the Post's
+  2026 prices; earlier years start from the Post's 2025 prices and move back with the
+  item's own BLS price history (turkey, milk, butter, flour) or its CPI group. The other 7
+  items (russet potatoes, peas, green beans, pie crusts, whipping cream, eggs, sugar) are
+  national prices x an NYC factor (BEA's 2024 Regional Price Parity for goods in the New
+  York metro, 110.3, moved with the New York vs U.S. food-at-home CPI). Post items not on
+  this menu (apples, mushrooms, onion, instant mashed potatoes, bakery pies, ice cream) are
+  not used. `nyc_item_sources.csv` shows each item's source and compares the Post's
+  2025-2026 change with the BLS index change: the Post's are far larger (e.g. milk +50% vs
+  +1%), so treat the one-year jump with care. The Post's turkey is a premium brand ($3.99/lb).
+  The affordability charts (4-7) stay on national prices and incomes.
 - **Why the full menu:** an earlier nine-item basket came to $61 in 2026, in line with the
   Farm Bureau's $58.63 "classic" menu, but both are spare (one dozen rolls and one pound of
   peas for ten people). The full menu ($87 in 2026) is closer to what a real Thanksgiving
