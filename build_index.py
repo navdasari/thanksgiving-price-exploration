@@ -207,6 +207,7 @@ SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 # 1. Cost as paid, with the Farm Bureau benchmark (comparison with overall prices is chart 2)
 FLOOR = 0
 fig, ax = cs.figure()
+fig.subplots_adjust(right=0.82)
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
 ax.text(2019.7, 8, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
 ax.set_ylim(FLOOR, 110)
@@ -217,9 +218,8 @@ ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5
 ax.plot(afbf.index, afbf, color=cs.DARK, lw=1.8, marker="o", ms=4.5, markeredgecolor=cs.BG)
 ax.set_xlim(1994, latest + 1)
 cs.baseline(ax, FLOOR)
-ax.text(2002, total[2002] - 10, "Our basket (full menu)", color=cs.RED, fontsize=11, fontweight="bold")
 ax.text(2012.3, afbf[2015] - 15, "Farm Bureau\nclassic menu", color=cs.DARK, fontsize=10, fontweight="semibold")
-cs.label_end(ax, latest, total[latest], f"${total[latest]:.0f}", cs.RED, dy=3, size=11, dot=False)
+cs.label_end(ax, latest, total[latest], f"Typical Thanksgiving\ndinner: ${total[latest]:.0f}", cs.RED, dy=6, size=11, weight="bold", dot=False)
 cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-3, weight="normal", size=9.5, dot=False)
 cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, dot=False)
 cs.unit_on_top(ax, prefix="$")
