@@ -68,7 +68,8 @@ for col, label in [("essentials_pct_of_spending", "Essentials, % of total spendi
 # ---------- Charts ----------
 import chart_style as cs
 
-colors = {"Lowest 20%": cs.RED, "Second 20%": cs.GOLD, "Middle 20%": cs.GRAY,
+# Income fifths run along an autumn ramp: cranberry (lowest) to pine (highest)
+colors = {"Lowest 20%": cs.RED, "Second 20%": cs.PUMPKIN, "Middle 20%": cs.GOLD,
           "Fourth 20%": cs.GREEN, "Highest 20%": cs.BLUE}
 fig, axes = cs.figure(1, 2, width=12, height=6.4)
 offsets_l = {"Lowest 20%": 1.5, "Second 20%": -0.8}

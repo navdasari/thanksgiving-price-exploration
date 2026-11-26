@@ -166,15 +166,18 @@ SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 fig, ax = cs.figure()
 ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
 ax.text(2019.7, 31.5, "Turkey price\nestimated by model", fontsize=8.5, color=cs.MUTED, style="italic")
+ax.set_ylim(25, 70)
+cs.soft_fill(ax, total.index, total, cs.RED, floor=25)
 ax.plot(total.index, total, color=cs.RED)
+cs.end_dot(ax, latest, total[latest], cs.RED)
 ax.plot(total_afbf.loc[2019:].index, total_afbf.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
-ax.plot(afbf.index, afbf, color=cs.GRAY, lw=2, marker="o", ms=4)
+ax.plot(afbf.index, afbf, color=cs.DARK, lw=1.8, marker="o", ms=4.5, markeredgecolor=cs.BG)
 ax.set_xlim(1994, latest + 1)
 ax.set_ylim(25, 70)
 cs.baseline(ax, 25)
 ax.text(2003, 30, "Our basket", color=cs.RED, fontsize=11, fontweight="bold")
-cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-6, weight="normal", size=9)
-cs.label_end(ax, latest, afbf[latest], "Farm Bureau\nsurvey", cs.GRAY, dy=-1.5)
+cs.label_end(ax, latest, total_afbf[latest], "With Farm Bureau\nturkey price", cs.RED, dy=-6, weight="normal", size=9.5, dot=False)
+cs.label_end(ax, latest, afbf[latest], "Farm Bureau\nsurvey", cs.DARK, dy=-1.5, dot=False)
 cs.unit_on_top(ax, prefix="$")
 cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019",
           "Cost of a dinner for 10 at October prices, as paid",
@@ -182,7 +185,7 @@ cs.finish(fig, "Thanksgiving dinner costs 31% more than in 2019",
 
 # 2. Indexes
 fig, ax = cs.figure()
-lines = [(cpi_food_idx, "Groceries", cs.GREEN, 7), (cpi_all_idx, "All prices", cs.GRAY, -2.5),
+lines = [(cpi_food_idx, "Groceries", cs.GREEN, 7), (cpi_all_idx, "All prices", cs.BLUE, -2.5),
          (laspeyres, "Dinner", cs.RED, 2.5), (geometric, "Dinner, w/ subst.", cs.GOLD, -8)]
 for s, lab, c, dy in lines:
     ax.plot(s.index, s, color=c, lw=2.2 if c == cs.GOLD else 3)
@@ -194,10 +197,12 @@ cs.finish(fig, "Since 2019, the dinner's price has risen in step with prices ove
           "Price indexes, October 2019 = 100. Groceries and all prices are CPI.",
           "BLS via FRED, American Farm Bureau Federation", OUT / "2_indexes.png")
 
-# 3. YoY contributions, recent years, grouped into four categories
+# 3. YoY contributions (kept in the earlier clean style: chart_style_clean.py)
+import chart_style_clean as csc
+# Recent years, all nine items
 recent = contrib.loc[2015:]
 # All nine items, each colored to suggest the food itself (turkey keeps the accent red)
-groups = {"Turkey": (["Turkey"], cs.RED),
+groups = {"Turkey": (["Turkey"], csc.RED),
           "Potatoes": (["Potatoes"], "#7A5A3A"),      # russet skin
           "Butter": (["Butter"], "#F2CC4E"),          # butter yellow
           "Milk": (["Milk"], "#BFD5E6"),              # milk-carton blue
@@ -206,7 +211,7 @@ groups = {"Turkey": (["Turkey"], cs.RED),
           "Bread": (["Bread (stuffing)"], "#C98A4B"), # golden crust
           "Flour": (["Flour (rolls, crust)"], "#E4D8C0"), # off-white flour
           "Sugar": (["Sugar"], "#B4BAC2")}            # granulated, cool gray
-fig, ax = cs.figure()
+fig, ax = csc.figure()
 fig.subplots_adjust(top=0.72)
 pos = np.zeros(len(recent)); neg = np.zeros(len(recent))
 for name, (cols, c) in groups.items():
@@ -214,8 +219,8 @@ for name, (cols, c) in groups.items():
     ax.bar(recent.index, v, bottom=np.where(v >= 0, pos, neg), color=c, width=0.72, label=name, zorder=3,
            edgecolor="white", linewidth=0.6)
     pos += np.where(v >= 0, v, 0); neg += np.where(v < 0, v, 0)
-ax.scatter(recent.index, recent.sum(axis=1), color=cs.TEXT, s=38, zorder=4, label="Net change")
-cs.baseline(ax, 0)
+ax.scatter(recent.index, recent.sum(axis=1), color=csc.TEXT, s=38, zorder=4, label="Net change")
+csc.baseline(ax, 0)
 ax.legend(ncol=5, loc="lower left", bbox_to_anchor=(0, 1.0), handlelength=1.2, columnspacing=1.4)
 from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
@@ -224,7 +229,7 @@ ax.set_yticks([-5, 0, 5, 10])
 ax.set_ylim(-7.5, 13.5)
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
-cs.finish(fig, "Turkey drives most swings in the dinner's cost",
+csc.finish(fig, "Turkey drives most swings in the dinner's cost",
           "Change in the cost of a dinner for 10 vs. the previous October",
           "BLS via FRED, American Farm Bureau Federation", OUT / "3_contributions.png")
 

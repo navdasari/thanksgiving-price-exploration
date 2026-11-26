@@ -188,9 +188,9 @@ for col, label in [("basket_cost", "Model turkey (main)"), ("basket_cost_afbf_tu
 # ---------------- Charts ----------------
 import chart_style as cs
 
-show = {"Income: lowest 20%": cs.RED, "Income: second 20%": cs.GOLD, "Renters": cs.GREEN,
+show = {"Income: lowest 20%": cs.RED, "Income: second 20%": cs.PUMPKIN, "Renters": cs.GREEN,
         "Single parents": cs.PURPLE, "Married, oldest child under 6": cs.BLUE,
-        "Age under 25": cs.GRAY, "Income: highest 20%": cs.DARK}
+        "Age under 25": cs.GOLD, "Income: highest 20%": cs.DARK}
 fig, axes = cs.figure(1, 2, width=12, height=6.8)
 for name, c in show.items():
     g = panel[panel.group == name]
@@ -213,9 +213,18 @@ cs.finish(fig, "The squeeze is widest at the bottom",
 
 w = wage.dropna(subset=["hours_at_federal_min"])
 fig, axes = cs.figure(1, 2, width=12, height=6.2)
-axes[0].plot(w.index, w.hours_at_federal_min, color=cs.RED)
 d = w.pct_of_decile1_week.dropna()
+axes[0].set_ylim(0, 10); axes[1].set_ylim(0, 15)
+cs.soft_fill(axes[0], w.index, w.hours_at_federal_min, cs.RED, floor=0, alpha=0.12)
+cs.soft_fill(axes[1], d.index, d, cs.BLUE, floor=0, alpha=0.12)
+axes[0].plot(w.index, w.hours_at_federal_min, color=cs.RED)
 axes[1].plot(d.index, d, color=cs.BLUE)
+cs.end_dot(axes[0], w.index[-1], w.hours_at_federal_min.iloc[-1], cs.RED)
+cs.end_dot(axes[1], d.index[-1], d.iloc[-1], cs.BLUE)
+axes[0].annotate(f"{w.hours_at_federal_min.iloc[-1]:.1f} hrs", (w.index[-1], w.hours_at_federal_min.iloc[-1]),
+                 xytext=(0, 12), textcoords="offset points", ha="center", color=cs.RED, fontweight="semibold")
+axes[1].annotate(f"{d.iloc[-1]:.1f}%", (d.index[-1], d.iloc[-1]),
+                 xytext=(0, 12), textcoords="offset points", ha="center", color=cs.BLUE, fontweight="semibold")
 axes[0].set_title("Hours of work at the federal minimum wage")
 axes[1].set_title("% of a week's pay, 10th-percentile full-time worker")
 axes[0].set_ylim(0, 10); cs.baseline(axes[0], 0)

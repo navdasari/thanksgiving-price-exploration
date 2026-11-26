@@ -271,7 +271,7 @@ matplotlib.use("Agg")
 import matplotlib.dates as mdates
 import chart_style as cs
 
-colors = {"Chicken ratio": cs.GRAY, BEST: cs.BLUE}
+colors = {"Chicken ratio": cs.MUTED, BEST: cs.PUMPKIN}
 fig, axes = cs.figure(2, 2, width=12, height=8.2, sharey=True)
 fig.subplots_adjust(hspace=0.45, top=0.8)
 for ax, origin in zip(axes.flat, ORIGINS):
@@ -292,24 +292,24 @@ for ax, origin in zip(axes.flat, ORIGINS):
 for ax in axes.flat:
     cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
 axes[0, 0].legend(loc="upper left", fontsize=9)
-cs.finish(fig, "Backtests: the combined model misses October turkey prices by about 8% on average",
+cs.finish(fig, "In backtests, the combined model misses October prices by about 8%",
           "Retail whole frozen turkey, $/lb. Each panel predicts years it never saw, from predictors only.",
           "BLS via FRED; author's models", OUT / "8_turkey_backtest.png")
 
 fig, ax = cs.figure()
 m = rec.main_estimate
-ax.fill_between(rec.index, rec.band_low_p10, rec.band_high_p90, color=cs.BLUE, alpha=0.15, lw=0)
+ax.fill_between(rec.index, rec.band_low_p10, rec.band_high_p90, color=cs.PUMPKIN, alpha=0.18, lw=0)
 hist = actual.loc["2014":]
 ax.plot(hist.index, hist, color=cs.TEXT, lw=2)
-ax.plot(m.index, m, color=cs.BLUE)
-ax.plot(rec.index, rec["Chicken ratio"], color=cs.GRAY, lw=1.6, ls=(0, (3, 2)))
+ax.plot(m.index, m, color=cs.PUMPKIN)
+ax.plot(rec.index, rec["Chicken ratio"], color=cs.MUTED, lw=1.6, ls=(0, (3, 2)))
 afbf_pts = pd.Series({pd.Timestamp(f"{yr}-11-01"): oct19 * v / AFBF_TURKEY[2019] for yr, v in AFBF_TURKEY.items()})
-ax.scatter(afbf_pts.index, afbf_pts, color=cs.RED, s=28, zorder=4)
+ax.scatter(afbf_pts.index, afbf_pts, color=cs.RED, s=42, zorder=5, edgecolor=cs.BG, linewidth=1.2)
 ax.text(hist.index[6], hist.max() + 0.05, "BLS actual", color=cs.TEXT, fontsize=10, fontweight="semibold")
 pad = pd.DateOffset(months=3)
-cs.label_end(ax, m.index[-1], m.iloc[-1], "Model estimate\n(80% band)", cs.BLUE, dx=pad, dy=0.12)
-cs.label_end(ax, rec.index[-1], rec["Chicken ratio"].iloc[-1], "Chicken ratio", cs.GRAY, dx=pad, dy=-0.05)
-cs.label_end(ax, afbf_pts.index[-1], afbf_pts.iloc[-1], "Farm Bureau\n(holiday, scaled)", cs.RED, dx=pad, dy=-0.12)
+cs.label_end(ax, m.index[-1], m.iloc[-1], "Model estimate\n(80% band)", cs.PUMPKIN, dx=pad, dy=0.12)
+cs.label_end(ax, rec.index[-1], rec["Chicken ratio"].iloc[-1], "Chicken ratio", cs.MUTED, dx=pad, dy=-0.05, dot=False)
+cs.label_end(ax, afbf_pts.index[-1], afbf_pts.iloc[-1], "Farm Bureau\n(holiday, scaled)", cs.RED, dx=pad, dy=-0.12, dot=False)
 ax.set_xlim(hist.index[0], rec.index[-1] + pd.DateOffset(months=2))
 fig.subplots_adjust(right=0.82)
 cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
