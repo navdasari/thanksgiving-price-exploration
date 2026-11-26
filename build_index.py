@@ -3,7 +3,7 @@
 Prices are taken in October of each year, the last month BLS publishes before
 Thanksgiving (November data comes out in mid-December).
 
-Menu: the Farm Bureau's expanded Thanksgiving menu for 10 (see BASKET). Items BLS does
+Menu: a Thanksgiving dinner for 10 built on the Farm Bureau's menus (see BASKET). Items BLS does
 not price start from the Farm Bureau's 2026 survey price and move with a CPI component.
 
 Data patches (flagged in the output):
@@ -38,12 +38,12 @@ def load(sid):
 
 # ---------------- Basket: Thanksgiving dinner for 10 ----------------
 # The menu follows the American Farm Bureau Federation's "expanded" Thanksgiving menu
-# (its classic menu plus boneless ham, russet potatoes and frozen green beans).
+# (its classic menu plus russet potatoes and frozen green beans), without the ham, plus
+# a gallon of apple cider.
 # item: (source, quantity, unit). Source is a FRED id for a BLS average price, a patched
 # series (TURKEY, BUTTER), or ANCHOR for items BLS does not price (see ANCHORS).
 BASKET = {
     "Turkey":            ("TURKEY",        16.0, "lb"),
-    "Ham":               ("APU0000704312",  3.0, "lb, boneless"),
     "Russet potatoes":   ("APU0000712112",  5.0, "lb"),
     "Sweet potatoes":    ("ANCHOR",         1.0, "3 lb"),
     "Stuffing mix":      ("ANCHOR",         1.0, "14 oz"),
@@ -55,6 +55,7 @@ BASKET = {
     "Pumpkin pie mix":   ("ANCHOR",         1.0, "30 oz can"),
     "Pie crusts":        ("ANCHOR",         1.0, "2 frozen"),
     "Whipping cream":    ("ANCHOR",         1.0, "half pint"),
+    "Apple cider":       ("ANCHOR",         1.0, "gallon"),
     "Milk":              ("APU0000709112",  1.0, "gal"),
     "Butter":            ("BUTTER",         1.0, "lb"),
     "Eggs":              ("APU0000708111",  1.0, "doz"),
@@ -77,6 +78,9 @@ ANCHORS = {
     "Pumpkin pie mix": (4.24, "CUUR0000SAF113"),
     "Pie crusts":      (3.28, "CUUR0000SAF111"),
     "Whipping cream":  (1.84, "CUUR0000SEFJ"),
+    # Apple cider: median of Nov 2026 grocery listings for a gallon (Costco $6.99 and $5.51,
+    # Meijer $7.49, Price Chopper $6.99), moved with the nonalcoholic beverages CPI.
+    "Apple cider":     (6.99, "CUUR0000SAF114"),
 }
 
 # ---------------- Patch turkey ----------------
@@ -225,10 +229,10 @@ cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, d
 cs.unit_on_top(ax, prefix="$")
 pct19 = 100 * (total[latest] / total[2019] - 1)
 cs.finish(fig, f"Thanksgiving dinner for 10 costs ${total[latest]:.0f}, {pct19:.0f}% more than in 2019",
-          "Cost at October prices, as paid. Full menu: turkey, ham, sides, rolls, pumpkin pie and baking staples.",
+          "Cost at October prices, as paid. Full menu: turkey, sides, rolls, pumpkin pie, apple cider and baking staples.",
           SRC_BLS + "; turkey since 2020 is a model estimate", OUT / "1_dinner_cost.png",
-          note=("How this improves on the Farm Bureau survey: we price the full expanded menu, not the "
-                "leaner classic list, using BLS national average shelf prices collected the same way every "
+          note=("How this improves on the Farm Bureau survey: we price a fuller menu than the Farm "
+                "Bureau's lean classic list, using BLS national average shelf prices collected the same way every "
                 "October since 1995 rather than a volunteer spot-check, and we fill the turkey price BLS "
                 "stopped publishing in 2020 with a backtested machine-learning ensemble (about 8% "
                 "average October error)."))
@@ -255,7 +259,6 @@ recent = contrib.loc[2015:]
 # Every item, each colored to suggest the food itself (continuing items keep their colors)
 FOOD_COLORS = {
     "Turkey": "#C8553D",          # roast-turkey red
-    "Ham": "#E8A2A2",             # ham pink
     "Russet potatoes": "#7A5A3A", # russet skin
     "Sweet potatoes": "#8C4A2F",  # sweet-potato skin
     "Stuffing mix": "#A67B4F",    # toasted bread
@@ -267,6 +270,7 @@ FOOD_COLORS = {
     "Pumpkin pie mix": "#E07A1F", # pumpkin
     "Pie crusts": "#EAD2A8",      # pastry
     "Whipping cream": "#CFC6B8",  # cream
+    "Apple cider": "#C9822B",     # cider amber
     "Milk": "#BFD5E6",            # milk-carton blue
     "Butter": "#F2CC4E",          # butter yellow
     "Eggs": "#F39B2E",            # yolk orange
@@ -290,7 +294,7 @@ from matplotlib.ticker import FuncFormatter
 ax.set_xticks(recent.index)
 ax.set_xticklabels([f"'{y % 100:02d}" for y in recent.index])
 ax.set_yticks([-5, 0, 5, 10])
-ax.set_ylim(-7.5, 13.5)
+ax.set_ylim(min(-7.5, neg.min() * 1.1), max(13.5, pos.max() * 1.08))
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: "+$10" if v == 10 else ("0" if v == 0 else f"{v:+g}")))
 cs.finish(fig, "Turkey drives most swings in the dinner's cost",

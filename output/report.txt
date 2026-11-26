@@ -1,21 +1,20 @@
       basket_cost  basket_cost_afbf_turkey  basket_cost_chicken_proxy  basket_cost_2026_dollars  laspeyres_2019=100  geometric_2019=100  cpi_food_at_home_2019=100  cpi_all_items_2019=100  afbf_survey turkey_estimated  butter_estimated
 year                                                                                                                                                                                                                                      
-2015        74.66                    74.66                      74.66                    105.98                99.4                98.5                      100.6                    92.4        50.11            False              True
-2016        74.85                    74.85                      74.85                    104.49                99.6                99.4                       98.3                    94.0        49.87            False              True
-2017        74.55                    74.55                      74.55                    102.02                99.2                99.0                       98.8                    95.9        49.12            False              True
-2018        73.36                    73.36                      73.36                     97.94                97.6                97.5                       99.0                    98.3        48.90            False             False
-2019        75.13                    75.13                      75.13                     98.60               100.0               100.0                      100.0                   100.0        48.91            False             False
-2020        77.17                    74.47                      81.01                    100.04               102.7               102.7                      104.0                   101.2        46.90             True             False
-2021        82.92                    82.88                      82.66                    101.18               110.4               110.1                      109.5                   107.5        53.31             True             False
-2022        98.12                    98.49                      98.70                    111.11               130.6               129.6                      123.1                   115.9        64.05             True             False
-2023        95.85                    95.76                      99.17                    105.12               127.6               127.3                      125.8                   119.7        61.17             True             False
-2024        93.91                    95.48                     102.12                    100.41               125.0               124.0                      127.2                   122.7        58.08             True             False
-2025        96.87                    89.38                     102.42                    100.70               128.9               128.1                      130.0                   126.2        55.18             True             False
-2026        96.18                    90.88                     100.72                     96.18               128.0               127.5                      133.2                   131.2        58.63             True             False
+2015        66.90                    66.90                      66.90                     94.97               100.3                99.3                      100.6                    92.4        50.11            False              True
+2016        67.56                    67.56                      67.56                     94.32               101.2               101.1                       98.3                    94.0        49.87            False              True
+2017        67.61                    67.61                      67.61                     92.52               101.3               101.2                       98.8                    95.9        49.12            False              True
+2018        66.26                    66.26                      66.26                     88.47                99.3                99.2                       99.0                    98.3        48.90            False             False
+2019        66.73                    66.73                      66.73                     87.58               100.0               100.0                      100.0                   100.0        48.91            False             False
+2020        68.71                    66.00                      72.54                     89.07               103.0               102.9                      104.0                   101.2        46.90             True             False
+2021        73.47                    73.44                      73.22                     89.66               110.1               109.8                      109.5                   107.5        53.31             True             False
+2022        87.31                    87.68                      87.89                     98.87               130.8               129.7                      123.1                   115.9        64.05             True             False
+2023        84.89                    84.81                      88.21                     93.10               127.2               126.9                      125.8                   119.7        61.17             True             False
+2024        83.35                    84.91                      91.56                     89.12               124.9               123.8                      127.2                   122.7        58.08             True             False
+2025        87.22                    79.72                      92.76                     90.66               130.7               129.8                      130.0                   126.2        55.18             True             False
+2026        87.39                    82.09                      91.93                     87.39               131.0               130.4                      133.2                   131.2        58.63             True             False
 
 Latest (2026) item costs:
 Turkey             34.46
-Ham                15.78
 Russet potatoes     4.95
 Sweet potatoes      4.20
 Stuffing mix        3.91
@@ -27,6 +26,7 @@ Veggie tray         1.31
 Pumpkin pie mix     4.24
 Pie crusts          3.28
 Whipping cream      1.84
+Apple cider         6.99
 Milk                4.10
 Butter              3.98
 Eggs                2.32
@@ -35,44 +35,44 @@ Sugar               1.00
 
 2026 vs prior year contributions ($):
 Eggs              -0.85
-Ham               -0.63
 Butter            -0.57
 Russet potatoes   -0.12
-Sugar             -0.02
 Flour             -0.02
+Sugar             -0.02
 Whipping cream     0.02
 Milk               0.04
 Veggie tray        0.06
 Pie crusts         0.07
 Stuffing mix       0.08
 Dinner rolls       0.08
-Green beans        0.09
 Frozen peas        0.09
+Green beans        0.09
 Cranberries        0.12
 Sweet potatoes     0.19
 Pumpkin pie mix    0.20
+Apple cider        0.23
 Turkey             0.49
 
 Base-2019 expenditure shares:
-Turkey             0.341
-Ham                0.178
-Russet potatoes    0.052
-Sweet potatoes     0.045
-Stuffing mix       0.039
-Dinner rolls       0.038
-Cranberries        0.027
-Frozen peas        0.021
-Green beans        0.021
-Veggie tray        0.014
-Pumpkin pie mix    0.045
-Pie crusts         0.033
-Whipping cream     0.020
-Milk               0.042
-Butter             0.053
-Eggs               0.017
+Turkey             0.384
+Russet potatoes    0.059
+Sweet potatoes     0.051
+Stuffing mix       0.044
+Dinner rolls       0.043
+Cranberries        0.030
+Frozen peas        0.024
+Green beans        0.024
+Veggie tray        0.016
+Pumpkin pie mix    0.051
+Pie crusts         0.037
+Whipping cream     0.022
+Apple cider        0.075
+Milk               0.047
+Butter             0.060
+Eggs               0.019
 Flour              0.006
-Sugar              0.008
+Sugar              0.009
 
 Note: from 2020 on, turkey follows the Farm Bureau's own turkey price, so the correlation below is partly built in.
 
-Correlation of YoY % changes, ours vs Farm Bureau (2016-2026): 0.83
+Correlation of YoY % changes, ours vs Farm Bureau (2016-2026): 0.81

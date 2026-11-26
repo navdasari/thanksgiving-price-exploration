@@ -2,9 +2,10 @@
 
 The cost of a full Thanksgiving dinner for 10, priced every October from 1995 to 2026
 using BLS average retail prices (downloaded from FRED), set against prices, wages and
-household budgets. The menu follows the American Farm Bureau Federation's expanded
-Thanksgiving menu: turkey, ham, potatoes, sweet potatoes, stuffing, rolls, cranberries,
-peas, green beans, a veggie tray, pumpkin pie with whipped cream, milk and baking staples. The turkey price BLS stopped publishing in 2020 is rebuilt with
+household budgets. The menu builds on the American Farm Bureau Federation's
+Thanksgiving menus: turkey, potatoes, sweet potatoes, stuffing, rolls, cranberries, peas,
+green beans, a veggie tray, pumpkin pie with whipped cream, apple cider, milk and baking
+staples. The turkey price BLS stopped publishing in 2020 is rebuilt with
 backtested time-series and machine-learning models.
 
 ## Summary
@@ -15,15 +16,16 @@ backtested time-series and machine-learning models.
   and the middle three fifths, 2025 is the highest share since at least 1995.
 - **The poorest gained nothing.** Before-tax income left after essentials stayed at about
   -$5,000 a year for the lowest fifth (2025 dollars); the top fifth gained about $14,500.
-- **The dinner costs $96 and rose a bit less than inflation.** The full dinner for 10 is
-  $96.18 in 2026 (about $9.60 a person), up 28% from 2019, vs +31% for overall prices and
-  +33% for groceries. It fell $0.68 from 2025, mostly on cheaper eggs, ham and butter.
-- **After essentials, the dinner takes a bigger bite for the bottom four income fifths.**
-  For the lowest fifth it is 29.8% of a week's non-essential spending, vs 28.9% in 2019;
-  for the second, 20.7% vs 18.8%. For the top fifth it is unchanged at 5.0%.
+- **The dinner costs $87 and rose in step with inflation.** The full dinner for 10 is
+  $87.39 in 2026 (about $8.74 a person), up 31% from 2019, the same as overall prices
+  (+31%) and a little less than groceries (+33%). It rose $0.18 from 2025: turkey added
+  $0.49 while cheaper eggs and butter took off $1.42.
+- **After essentials, the dinner takes a bigger bite for every income fifth.** For the
+  lowest fifth it is 26.9% of a week's non-essential spending, vs 25.7% in 2019; for the
+  second, 18.6% vs 16.7%; for the top fifth, 4.5% vs 4.4%.
 - **Minimum-wage workers lost ground.** At $7.25 since 2009, the federal minimum buys 64%
-  of what it did. The dinner takes 13.3 hours of work, vs 10.4 in 2019, the 3rd-highest in
-  32 years.
+  of what it did. The dinner takes 12.1 hours of work, vs 9.2 in 2019, the most in 32
+  years.
 - **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
   millions of households just before Thanksgiving.
 
@@ -49,7 +51,7 @@ charts look the same on any machine.
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
 
 ## Nowcasting the turkey price: ML and time-series ensemble (`turkey_price_ml_modeling.py`)
-Turkey is the basket's largest item (about 36% of its cost), and BLS stopped publishing its average retail price
+Turkey is the basket's largest item (about 39% of its cost), and BLS stopped publishing its average retail price
 (whole frozen turkey, per lb) after February 2020. The script estimates it for March 2020
 to October 2026 from series that are still published, and tests that approach first.
 
@@ -86,17 +88,19 @@ income: hours of work, share of income, and income left after essentials.
 
 ## Data notes
 - **Menu and prices:** items BLS prices directly use BLS October average prices (turkey
-  until 2020, ham, russet potatoes, milk, butter, eggs, flour, sugar). Items BLS does not
+  until 2020, russet potatoes, milk, butter, eggs, flour, sugar). Items BLS does not
   price (sweet potatoes, stuffing mix, rolls, cranberries, peas, green beans, veggie tray,
   pumpkin pie mix, pie crusts, whipping cream) start from the Farm Bureau's 2026 survey
   price and move back in time with the closest CPI component on FRED: cereals and bakery,
   fruits and vegetables, or dairy. FRED only has these broad components, so this misses
   item-specific swings. The Farm Bureau does not publish its green bean price; the
-  frozen-pea price is used. Ham is 3 lb boneless.
+  frozen-pea price is used. Apple cider (1 gallon) starts from $6.99, the median of
+  November 2026 grocery listings (Costco $6.99 and $5.51, Meijer $7.49, Price Chopper
+  $6.99), and moves with the CPI for nonalcoholic beverages.
 - **Why the full menu:** an earlier nine-item basket came to $61 in 2026, in line with the
   Farm Bureau's $58.63 "classic" menu, but both are spare (one dozen rolls and one pound of
-  peas for ten people, no second main dish). The full menu ($96 in 2026) is closer to what
-  a real Thanksgiving costs. It still leaves out drinks, appetizers and non-food items.
+  peas for ten people). The full menu ($87 in 2026) is closer to what a real Thanksgiving
+  costs. It still leaves out alcohol, appetizers and non-food items.
 - **Turkey:** model estimate from March 2020 (see above). Two comparison versions are in
   `index_summary.csv`: the Farm Bureau holiday turkey price and a chicken ratio.
 - **October 2013 (turkey) and October 2025 (all items):** not published because of
@@ -112,8 +116,8 @@ person (disposable income minus housing and utilities, food at home, health care
 gasoline and other energy goods; BEA, Q3 of each year).
 
 Finding: against average wages and per-person income, 2026 is the most affordable year
-since 1995 (2.9 hours of work vs 3.2 in 2019), because incomes grew faster than prices.
-Against median household income it is not: 5.8% of a week's income in 2025 vs 5.7% in
+since 1995 (2.7 hours of work vs 2.8 in 2019), because incomes grew faster than prices.
+Against median household income it is not: 5.2% of a week's income in 2025 vs 5.1% in
 2019. In these national accounts, essentials stay at about 40-41% of disposable income,
 but that total includes health care paid by employers and government; the household
 results below show the squeeze in what households pay themselves.
@@ -126,8 +130,8 @@ twice its after-tax income. Essentials = shelter, utilities, food at home and he
 
 Findings:
 - **A week of spending (chart 5).** In 2025 the lowest fifth spends about $730 a week:
-  $405 on essentials, leaving $325, of which the $97 dinner for 10 takes 30%. The same
-  dinner is 13.3% of the lowest fifth's whole week vs 3.2% of the top fifth's ($3,068).
+  $405 on essentials, leaving $325, of which the $87 dinner for 10 takes 27%. The same
+  dinner is 12.0% of the lowest fifth's whole week vs 2.8% of the top fifth's ($3,068).
   Since 1995, in 2025 dollars, the lowest fifth's week grew from $594 to $730, and $99 of
   that $136 increase went to essentials.
 - **Bottom vs top half (chart 4).** Housing (rent or mortgage, property costs, utilities),
@@ -141,10 +145,10 @@ Findings:
   55% for the lowest 20%, 53% for the second, 47% for the middle). Incomes in the survey
   kept up with essential costs, but households are devoting more of what they spend to
   essentials, leaving less for everything else.
-- After essentials, the dinner takes more of what is left than in 2019 for the bottom
-  four quintiles; for the top fifth it is unchanged. As a share of total spending it is
+- After essentials, the dinner takes more of what is left than in 2019 for every
+  quintile. As a share of total spending it is
   near its low for the lowest fifth.
-- The gap between groups is large: for the lowest 20%, the dinner for 10 costs about 30%
+- The gap between groups is large: for the lowest 20%, the dinner for 10 costs about 27%
   of a week's non-essential spending, compared with about 5% for the highest 20%.
 
 ## Who is squeezed? (`deep_dive.py`)
@@ -163,7 +167,7 @@ Assumptions tested:
 - **Single-year noise.** Changes use 3-year averages (2017-19 vs 2023-25); small groups
   have spikes in single years (e.g. young married families in 2019).
 - **The turkey estimate.** Dinner measures are rerun with all three turkey versions. The
-  minimum-wage result holds in all of them (3rd- or 4th-most hours in 32 years). The
+  minimum-wage result holds in all of them (1st- to 4th-most hours in 32 years). The
   lowest fifth's dinner-to-income share is the lowest on record in all three.
 
 Limitations: group averages still hide variation within groups; the survey misses people
