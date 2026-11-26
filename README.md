@@ -24,8 +24,7 @@ backtested time-series and machine-learning models.
   for the second, 20.7% vs 18.8%. For the top fifth it is unchanged at 5.0%.
 - **Minimum-wage workers lost ground.** At $7.25 since 2009, the federal minimum buys 64%
   of what it did. The dinner takes 13.3 hours of work, vs 10.4 in 2019, the 3rd-highest in
-  32 years. Full-time workers at the 10th percentile did better: their pay has outpaced
-  prices since 2021.
+  32 years.
 - **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
   millions of households just before Thanksgiving.
 
