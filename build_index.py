@@ -155,8 +155,8 @@ SRC_BLS = "BLS average prices via FRED, American Farm Bureau Federation"
 
 # 1. Nominal cost and cost relative to overall prices, with the Farm Bureau benchmark
 fig, ax = cs.figure()
-ax.axvspan(2019.5, latest + 0.5, color="#E2E2E2", zorder=0, lw=0)
-ax.text(2019.7, 31.5, "TURKEY PRICE FROM\nFARM BUREAU SURVEY", fontsize=8, color=cs.MUTED, fontfamily=cs.MONO)
+ax.axvspan(2019.5, latest + 0.5, color=cs.SHADE, zorder=0, lw=0)
+ax.text(2019.7, 31.5, "Turkey price from\nFarm Bureau survey", fontsize=8.5, color=cs.MUTED, style="italic")
 ax.plot(real_total.index, real_total, color=cs.BLUE)
 ax.plot(total.index, total, color=cs.RED)
 ax.plot(total_chicken.loc[2019:].index, total_chicken.loc[2019:], color=cs.RED, lw=1.5, ls=(0, (2, 2)))
@@ -193,11 +193,11 @@ recent = contrib.loc[2015:]
 groups = {"Turkey": (["Turkey"], cs.RED),
           "Potatoes": (["Potatoes"], cs.GREEN),
           "Butter": (["Butter"], cs.GOLD),
-          "Milk": (["Milk"], "#F2CF7E"),
-          "Eggs": (["Eggs"], "#A8741A"),
+          "Milk": (["Milk"], cs.LIGHT_GOLD),
+          "Eggs": (["Eggs"], cs.DARK_GOLD),
           "Ice cream": (["Ice cream (pie)"], cs.PURPLE),
           "Bread": (["Bread (stuffing)"], cs.BLUE),
-          "Flour": (["Flour (rolls, crust)"], "#8CCDEE"),
+          "Flour": (["Flour (rolls, crust)"], cs.LIGHT_BLUE),
           "Sugar": (["Sugar"], cs.GRAY)}
 fig, ax = cs.figure()
 fig.subplots_adjust(top=0.72)
