@@ -28,9 +28,11 @@ backtested time-series and machine-learning models.
 - **After essentials, the dinner takes a bigger bite for every income fifth.** For the
   lowest fifth it is 26.9% of a week's non-essential spending, vs 25.7% in 2019; for the
   second, 18.6% vs 16.7%; for the top fifth, 4.5% vs 4.4%.
-- **Minimum-wage workers lost ground.** At $7.25 since 2009, the federal minimum buys 64%
-  of what it did. The dinner takes 12.1 hours of work, vs 9.2 in 2019, the most in 32
-  years.
+- **In NYC the dinner takes 9.9 hours of minimum-wage work (chart 7).** At New York City's
+  $17 minimum (employers with 11+ workers), the NYC-priced dinner takes 9.9 hours in 2026,
+  up from 7.3 in 2019 and 8.6 in 2025, but below the 12-16 hours of the years before the
+  city's raises began in 2017. At the federal $7.25, unchanged since 2009, the U.S.-priced
+  dinner takes 12.1 hours, the most in 32 years.
 - **Not in annual data:** the November 2025 shutdown delayed or cut SNAP benefits for
   millions of households just before Thanksgiving.
 
@@ -117,7 +119,10 @@ income: hours of work, share of income, and income left after essentials.
   not used. `nyc_item_sources.csv` shows each item's source and compares the Post's
   2025-2026 change with the BLS index change: the Post's are far larger (e.g. milk +50% vs
   +1%), so treat the one-year jump with care. The Post's turkey is a premium brand ($3.99/lb).
-  The affordability charts (4-7) stay on national prices and incomes.
+  Chart 7 uses NYC's minimum wage: the higher of the federal and New York State rates
+  (FRED), with NYC's 2017-2023 rates for employers with 11+ workers from NY Labor Law 652
+  ($11, $13, then $15). The other affordability charts (4-6) stay on national prices and
+  incomes.
 - **Why the full menu:** an earlier nine-item basket came to $61 in 2026, in line with the
   Farm Bureau's $58.63 "classic" menu, but both are spare (one dozen rolls and one pound of
   peas for ten people). The full menu ($87 in 2026) is closer to what a real Thanksgiving
