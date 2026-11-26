@@ -124,25 +124,11 @@ print(table[[c for c in table.columns if c.startswith("dinner")]].round(1).to_st
 minwage = fred("FEDMINNFRWG", 10)
 wage = pd.DataFrame({"dinner": dinner, "federal_min_wage": minwage.reindex(dinner.index)})
 wage["hours_at_federal_min"] = wage.dinner / wage.federal_min_wage
-# New York City minimum wage in October: the higher of the federal and New York State
-# rates (FRED STTMINWGNY), except 2017-2023, when NYC's rate for employers with 11+ workers
-# (NY Labor Law 652) was above the statewide figure FRED reports: $11 from Dec 31, 2016,
-# $13 from Dec 31, 2017, $15 from Dec 31, 2018. Small NYC employers phased in a year later.
-ny_state = fred("STTMINWGNY", 1)
-NYC_OVERRIDE = {2017: 11.00, 2018: 13.00, 2019: 15.00, 2020: 15.00, 2021: 15.00, 2022: 15.00, 2023: 15.00}
-nyc_min = pd.concat([minwage, ny_state.reindex(minwage.index)], axis=1).max(axis=1)
-for yr, v in NYC_OVERRIDE.items():
-    nyc_min[yr] = v
-wage["nyc_min_wage"] = nyc_min.reindex(wage.index)
-wage["dinner_nyc"] = summary["basket_cost_nyc"].reindex(wage.index)
-wage["hours_at_nyc_min"] = wage.dinner_nyc / wage.nyc_min_wage
 wage.round(2).to_csv(OUT / "deep_dive_wages.csv")
 print("\n== E. Low-wage workers ==")
 print(wage.loc[[1995, 2000, 2005, 2009, 2010, 2015, 2019, 2021, 2022, 2023, 2024, 2025, 2026]].round(2).to_string())
 print("hours at federal minimum, 2026 rank (1 = most hours):",
       int(wage.hours_at_federal_min.rank(ascending=False).loc[2026]), "of", wage.hours_at_federal_min.notna().sum())
-print("hours at NYC minimum, 2026 rank (1 = most hours):",
-      int(wage.hours_at_nyc_min.rank(ascending=False).loc[2026]), "of", wage.hours_at_nyc_min.notna().sum())
 
 # ---------------- F. Prices, rent and the minimum wage ----------------
 cpi_m = fred("CPIAUCSL")
@@ -216,23 +202,18 @@ cs.finish(fig, "The squeeze is widest at the bottom",
           "BLS Consumer Expenditure Survey via FRED", OUT / "6_who_is_squeezed.png",
           note="Right panel omits married couples with young children (much higher incomes and a one-year spike in 2019).")
 
-w = wage.dropna(subset=["hours_at_nyc_min"])
-h = w.hours_at_nyc_min
+w = wage.dropna(subset=["hours_at_federal_min"])
+h = w.hours_at_federal_min
 fig, ax = cs.figure()
-fig.subplots_adjust(right=0.85)
-ax.set_ylim(0, 2 * int(np.ceil(h.max() * 1.2 / 2)))
+ax.set_ylim(0, 2 * int(np.ceil(h.max() * 1.15 / 2)))
 ax.set_xlim(h.index.min() - 1, h.index.max() + 1)
 ax.plot(h.index, h, color=cs.RED)
 ax.annotate(f"{h.iloc[-1]:.1f} hours", (h.index[-1], h.iloc[-1]), xytext=(0, 12), textcoords="offset points",
             ha="center", color=cs.RED, fontweight="semibold")
-# Mark NYC minimum wage steps
-for yr, label in [(2005, "$6.00"), (2014, "$8.00"), (2017, "$11"), (2019, "$15"), (2024, "$16")]:
-    ax.annotate(f"{label}", (yr, h[yr]), xytext=(0, -22), textcoords="offset points", ha="center",
-                fontsize=9, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=0.8))
+ax.annotate("Federal minimum wage stuck\nat $7.25 since 2009", (2009, h[2009]), xytext=(2001, h.max() * 0.35),
+            fontsize=10, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=1))
 cs.baseline(ax, 0)
 cs.unit_on_top(ax, suffix=" hrs")
-cs.finish(fig, f"In NYC, Thanksgiving dinner takes {h.iloc[-1]:.0f} hours of minimum-wage work",
-          f"Hours at New York City's minimum wage to buy Thanksgiving dinner for 10 at NYC prices, {h.index.min()}-{h.index.max()}",
-          "BLS and BEA via FRED; NY Labor Law 652; NY Dept. of Labor", OUT / "7_low_wage.png",
-          note=f"Minimum wage for NYC employers with 11 or more workers; labels mark raises (now ${wage.nyc_min_wage.iloc[-1]:.2f}). "
-               "Dinner at NYC prices (see chart 1).")
+cs.finish(fig, "For minimum-wage workers, the dinner costs more work",
+          f"Hours of work at the federal minimum wage to buy Thanksgiving dinner for 10, {h.index.min()}-{h.index.max()}",
+          "BLS via FRED, U.S. Department of Labor", OUT / "7_low_wage.png")
