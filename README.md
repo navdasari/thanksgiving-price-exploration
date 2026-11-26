@@ -6,7 +6,7 @@ The menu builds on the American Farm Bureau Federation's: turkey, potatoes, swee
 stuffing, rolls, cranberries, peas, green beans, a veggie tray, pumpkin pie with whipped
 cream, apple cider, milk and baking staples. The turkey price BLS stopped publishing in 2020
 is rebuilt with backtested time-series and machine-learning models. Full methods and
-limitations are in the [technical appendix](docs/technical_appendix.html).
+limitations are in the [technical appendix](docs/technical_appendix.pdf).
 
 ## Summary
 - **The cost-of-living squeeze hits the bottom hardest.** From 2017-19 to 2023-25,
