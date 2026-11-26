@@ -78,7 +78,7 @@ plt.rcParams.update({"figure.dpi": 150, "axes.spines.top": False, "axes.spines.r
 cpi = summary["cpi_all_items_2019=100"]
 real = dinner / cpi * 100
 fig, ax = plt.subplots(figsize=(9, 5))
-for s, lab, c, ls in [(real, "Inflation-adjusted cost", "#b5541c", "-"),
+for s, lab, c, ls in [(real, "Price relative to all prices (CPI)", "#b5541c", "-"),
                       (out.hours_of_work, "Hours of work (avg wage)", "#2f7d4f", "-"),
                       (out.per_guest_pct_of_daily_dpi, "Share of disposable income", "#5b6c8f", "--"),
                       (out.per_guest_pct_of_daily_discretionary, "Share of discretionary income", "#e0a458", "-")]:

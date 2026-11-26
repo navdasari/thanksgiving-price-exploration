@@ -153,18 +153,18 @@ contrib.round(2).to_csv(OUT / "yoy_contributions.csv")
 plt.rcParams.update({"figure.dpi": 150, "axes.spines.top": False, "axes.spines.right": False,
                      "axes.grid": True, "grid.alpha": 0.3, "font.size": 10})
 
-# 1. Nominal vs real cost, with the Farm Bureau benchmark
+# 1. Nominal cost and cost relative to overall prices, with the Farm Bureau benchmark
 fig, ax = plt.subplots(figsize=(9, 5))
 ax.plot(total.index, total, color="#b5541c", lw=2.2, label="Our basket (nominal)")
 ax.plot(real_total.index, real_total, color="#5b6c8f", lw=2.2, ls="--",
-        label=f"Our basket (in {latest} dollars)")
+        label=f"Our basket, relative to overall prices ({latest} dollars)")
 ax.plot(total_chicken.loc[2019:].index, total_chicken.loc[2019:], color="#b5541c", lw=1, ls=":",
         label="Our basket, turkey proxied by chicken")
 ax.plot(afbf.index, afbf, "o-", color="#2f7d4f", ms=4, lw=1.4, label="Farm Bureau survey (nominal)")
 ax.axvspan(2019.5, latest + 0.5, color="grey", alpha=0.08)
 ax.text(2019.7, ax.get_ylim()[0] + 1, "turkey price from Farm Bureau survey", fontsize=8, color="grey")
 ax.set(title="Cost of a Thanksgiving dinner for 10 (October prices)", ylabel="$", xlabel="")
-ax.legend(frameon=False)
+ax.legend(frameon=False, loc="center left", bbox_to_anchor=(0.0, 0.46), fontsize=9)
 fig.tight_layout(); fig.savefig(OUT / "1_dinner_cost.png"); plt.close(fig)
 
 # 2. Indexes
