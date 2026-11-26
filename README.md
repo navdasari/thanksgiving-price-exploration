@@ -45,8 +45,8 @@ font if installed, otherwise system fonts).
 |---|---|---|
 | `turkey_model.py` | Rebuilds the retail turkey price after Feb 2020 | `turkey_reconstruction.csv`, `turkey_model_metrics.csv`, charts 9-10 |
 | `build_index.py` | Prices the dinner each October, index numbers, item contributions | `index_summary.csv`, `item_costs.csv`, charts 1-3 |
-| `affordability.py` | Dinner vs national wages and income | `affordability.csv`, charts 4-5 |
-| `by_income.py` | Dinner and essentials by income fifth | `by_income.csv`, chart 6 |
+| `affordability.py` | Dinner vs national wages and income | `affordability.csv`, chart 5 |
+| `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, charts 4 and 6 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 7-8 |
 
 ## Rebuilding the turkey price (`turkey_model.py`)
@@ -114,8 +114,17 @@ twice its after-tax income. Essentials = shelter, utilities, food at home and he
 (gasoline is left out: FRED's quintile series is broken from 2023).
 
 Findings:
-- Essentials take a near-record share of household spending in every quintile (2025:
-  55% for the lowest 20%, 53% for the second, 47% for the middle).
+- **Bottom vs top half (chart 4).** Housing (rent or mortgage, property costs, utilities),
+  health care and groceries take about 62% of the bottom half's before-tax income in 2025,
+  vs 25% for the top half. As a share of *income*, neither has risen much: the bottom
+  half was at 64% in 2019 and peaked at 66% in 2022. The bottom half reports spending
+  about 120% of its income, so its shares are approximate, and the 2004 drop reflects
+  a change in how the survey measures income. (Bottom half = lowest two fifths plus half
+  of the middle fifth.)
+- Essentials take a near-record share of household *spending* in every quintile (2025:
+  55% for the lowest 20%, 53% for the second, 47% for the middle). Incomes in the survey
+  kept up with essential costs, but households are devoting more of what they spend to
+  essentials, leaving less for everything else.
 - After essentials, the dinner takes more of what is left than in 2019 for every
   quintile. As a share of total spending it is near its low for the lowest fifth.
 - The gap between groups is large: for the lowest 20%, the dinner for 10 costs about 19%

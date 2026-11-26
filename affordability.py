@@ -74,25 +74,6 @@ print(ess_pc.loc[[2019, 2022, 2025, 2026]].round(0).to_string())
 # ---------- Charts ----------
 import chart_style as cs
 
-cpi = summary["cpi_all_items_2019=100"]
-real = dinner / cpi * 100
-fig, ax = cs.figure()
-series = [(real, "Price vs. all prices", cs.GRAY, 3.5), (out.hours_of_work, "Hours of work", cs.BLUE, 2.5),
-          (out.per_guest_pct_of_daily_discretionary, "Discretionary income", cs.GOLD, -1),
-          (out.per_guest_pct_of_daily_dpi, "Disposable income", cs.RED, -4.5)]
-for s, lab, c, dy in series:
-    s = s.dropna(); v = 100 * s / s.loc[2019]
-    ax.plot(v.index, v, color=c, lw=2.2 if c == cs.GRAY else 3)
-    cs.label_end(ax, v.index[-1], v.iloc[-1], lab, c, dy=dy, size=9.5)
-ax.set_xlim(1994, 2027)
-ax.set_ylim(75, 155)
-fig.subplots_adjust(right=0.8)
-cs.baseline(ax, 100)
-cs.unit_on_top(ax)
-cs.finish(fig, "Measured against average incomes, the dinner is as affordable as it has been since 1995",
-          "Cost of a Thanksgiving dinner for 10 relative to each yardstick, 2019 = 100 (lower = more affordable)",
-          "BLS, BEA and Census via FRED", OUT / "4_affordability.png")
-
 fig, ax = cs.figure()
 e = out.essentials_share_of_dpi.dropna()
 ax.plot(e.index, e, color=cs.BLUE)

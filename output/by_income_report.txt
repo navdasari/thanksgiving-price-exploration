@@ -62,3 +62,7 @@ year
 2024             NaN         NaN         NaN         NaN          NaN
 2025             NaN         NaN         NaN         NaN          NaN
   rank of 2023 (1 = most affordable / lowest share): {'Lowest 20%': 7, 'Second 20%': 10, 'Middle 20%': 10, 'Fourth 20%': 11, 'Highest 20%': 12} of 29 years
+
+== Essentials as % of before-tax income, bottom vs top half ==
+Bottom 50%: 1995 64.2%, 2019 63.8%, 2022 65.9%, 2025 62.2% (2025 rank, 1 = highest: 18/31)
+Top 50%: 1995 27.1%, 2019 24.6%, 2022 25.3%, 2025 25.1% (2025 rank, 1 = highest: 24/31)

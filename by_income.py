@@ -88,3 +88,48 @@ fig.subplots_adjust(right=0.87)
 cs.finish(fig, "Essentials take more of every budget, leaving less room for the dinner",
           "By income fifth, 1995-2025. Essentials: shelter, utilities, groceries, health care.",
           "BLS Consumer Expenditure Survey via FRED", OUT / "6_by_income.png")
+
+# ---------- Chart 4: essentials as a share of income, bottom vs top half ----------
+# Bottom 50% = lowest two fifths + half of the middle fifth; top 50% = the rest.
+# Shares are aggregate: total spending on each category / total before-tax income.
+HALVES = {"Bottom 50%": {"02": 1, "03": 1, "04": 0.5}, "Top 50%": {"04": 0.5, "05": 1, "06": 1}}
+CATS = {"Housing": (["SHELTER", "UTILS"], cs.BLUE),
+        "Health care": (["HEALTH"], cs.RED),
+        "Groceries": (["FOODHOME"], cs.GOLD)}
+halves = {}
+for half, w in HALVES.items():
+    inc = sum(load("INCBFTAX", q) * k for q, k in w.items())
+    halves[half] = pd.DataFrame({c: 100 * sum(load(x, q) * k for x in xs for q, k in w.items()) / inc
+                                 for c, (xs, _) in CATS.items()}).loc[1995:]
+pd.concat(halves, axis=1).round(2).to_csv(OUT / "essentials_by_half.csv")
+print("\n== Essentials as % of before-tax income, bottom vs top half ==")
+for half, d in halves.items():
+    t = d.sum(axis=1)
+    print(f"{half}: 1995 {t[1995]:.1f}%, 2019 {t[2019]:.1f}%, 2022 {t[2022]:.1f}%, 2025 {t[2025]:.1f}% "
+          f"(2025 rank, 1 = highest: {int(t.rank(ascending=False)[2025])}/{len(t)})")
+
+fig, axes = cs.figure(1, 2, width=12, height=6.4, sharey=True)
+for ax, (half, d) in zip(axes, halves.items()):
+    ax.stackplot(d.index, *[d[c] for c in CATS], colors=[c for _, c in CATS.values()], alpha=0.9, lw=0)
+    total = d.sum(axis=1)
+    ax.plot(total.index, total, color=cs.TEXT, lw=1.2)
+    ax.set_title(f"{half} of households by income")
+    ax.set_ylim(0, 78); ax.set_xlim(1995, 2025)
+    cs.baseline(ax, 0)
+    ax.annotate(f"{total[2025]:.0f}%", (2025, total[2025]), xytext=(2025.3, total[2025]),
+                fontsize=11, fontweight="semibold", color=cs.TEXT, va="center", annotation_clip=False)
+# label the bands once, on the left panel, at their 2010 midpoints
+d = halves["Bottom 50%"]; base = 0
+for c, (_, col) in CATS.items():
+    mid = base + d.loc[2010, c] / 2; base += d.loc[2010, c]
+    axes[0].text(2010, mid, c, color="white", fontsize=10, fontweight="semibold", ha="center", va="center")
+axes[0].annotate("2004: survey starts\nestimating missing income", (2004, halves["Bottom 50%"].sum(axis=1)[2004]),
+                 xytext=(2000.5, 71), fontsize=8.5, color=cs.MUTED, ha="center",
+                 arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=0.8))
+for ax in axes:
+    cs.unit_on_top(ax, suffix="%")
+fig.subplots_adjust(right=0.95, wspace=0.12)
+cs.finish(fig, "The bottom half spends about 62% of its income on essentials; the top half, 25%",
+          "Housing (rent or mortgage, property costs, utilities), health care and groceries, % of before-tax income, 1995-2025",
+          "BLS Consumer Expenditure Survey via FRED", OUT / "4_essentials_by_half.png",
+          note="The bottom half reports spending about 120% of its income (under-reported income, benefits, retirees using savings), so its shares are approximate.")
