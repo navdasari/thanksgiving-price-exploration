@@ -153,7 +153,7 @@ for half, d in halves.items():
 
 fig, axes = cs.figure(1, 2, width=12, height=6.4, sharey=True)
 for ax, (half, d) in zip(axes, halves.items()):
-    ax.stackplot(d.index, *[d[c] for c in CATS], colors=[c for _, c in CATS.values()], alpha=0.9, lw=0)
+    ax.stackplot(d.index, *[d[c] for c in CATS], colors=[c for _, c in CATS.values()], alpha=1, lw=0, zorder=2)
     total = d.sum(axis=1)
     ax.plot(total.index, total, color=cs.TEXT, lw=1.2)
     ax.set_title(f"{half} of households by income")

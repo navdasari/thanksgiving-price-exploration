@@ -1,7 +1,7 @@
-"""Shared Thanksgiving chart theme: warm cream canvas and an autumn harvest palette, with
-FiveThirtyEight-style type: a bold grotesk headline and labels (Inter) and monospaced tick
-labels and source line (JetBrains Mono). Dots mark line ends; a small project mark sits in
-the footer.
+"""Shared chart theme: FiveThirtyEight-style layout (gray canvas, full grid, heavy
+baseline, thick lines, dark source bar) with an autumn Thanksgiving palette. Type follows
+FiveThirtyEight too: a bold grotesk for headlines and labels (Inter) and monospaced tick
+labels and source line (JetBrains Mono).
 
 The fonts ship in fonts/ (Inter: SIL Open Font License; JetBrains Mono: Apache 2.0) so the
 charts look the same anywhere."""
@@ -10,6 +10,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
+from matplotlib.patches import Rectangle
 from matplotlib.ticker import FuncFormatter
 
 FONT_DIR = Path(__file__).parent / "fonts"
@@ -26,11 +27,12 @@ SANS = _font(["Inter", "Helvetica Neue", "Helvetica", "Arial", "Liberation Sans"
 MONO = _font(["JetBrains Mono", "DejaVu Sans Mono", "Liberation Mono"], "monospace")
 
 # Canvas and text
-BG = "#FBF6EC"          # cream
-TEXT = "#2E1F16"        # espresso
-MUTED = "#7D6A5A"       # warm brown-gray
-GRID = "#EADFCB"
-SHADE = "#F2E7D3"
+BG = "#F0F0F0"          # FiveThirtyEight gray canvas
+TEXT = "#222222"
+MUTED = "#5A5A5A"
+GRID = "#CBCBCB"
+SHADE = "#E2E2E2"
+FOOTER = "#5B5B5B"      # dark source bar
 
 # Harvest palette (names kept from the earlier theme so chart code stays readable)
 RED = "#A3243B"         # cranberry
@@ -49,14 +51,14 @@ def apply():
     plt.rcParams.update({
         "figure.facecolor": BG, "axes.facecolor": BG, "savefig.facecolor": BG,
         "figure.dpi": 150, "font.family": SANS, "font.size": 11.5, "text.color": TEXT,
-        "axes.edgecolor": BG, "axes.linewidth": 0, "axes.grid": True, "axes.grid.axis": "y",
+        "axes.edgecolor": BG, "axes.linewidth": 0, "axes.grid": True, "axes.grid.axis": "both",
         "axes.axisbelow": True, "grid.color": GRID, "grid.linewidth": 1.0,
         "axes.spines.top": False, "axes.spines.right": False,
         "axes.spines.left": False, "axes.spines.bottom": False,
         "xtick.color": MUTED, "ytick.color": MUTED, "xtick.labelsize": 10.5, "ytick.labelsize": 10.5,
         "xtick.major.size": 0, "ytick.major.size": 0, "xtick.major.pad": 7, "ytick.major.pad": 5,
-        "axes.prop_cycle": plt.cycler(color=PALETTE), "lines.linewidth": 2.8,
-        "lines.solid_capstyle": "round", "lines.solid_joinstyle": "round",
+        "axes.prop_cycle": plt.cycler(color=PALETTE), "lines.linewidth": 3.2,
+        "lines.solid_capstyle": "butt", "lines.solid_joinstyle": "round",
         "legend.frameon": False, "legend.fontsize": 10.5,
         "axes.titlesize": 13, "axes.titleweight": "bold", "axes.titlelocation": "left",
         "axes.titlepad": 12, "axes.titlecolor": TEXT,
@@ -87,17 +89,17 @@ def unit_on_top(ax, fmt=lambda v: f"{v:g}", prefix="", suffix=""):
 
 
 def baseline(ax, y=0):
-    ax.axhline(y, color="#B9A68E", lw=1.2, zorder=2)
+    ax.axhline(y, color=TEXT, lw=2, zorder=2)
 
 
 def soft_fill(ax, x, y, color, floor=None, alpha=0.10):
-    """A soft wash under a line, for the main series."""
-    lo = ax.get_ylim()[0] if floor is None else floor
-    ax.fill_between(x, y, lo, color=color, alpha=alpha, lw=0, zorder=1)
+    """No-op in the FiveThirtyEight style (kept so chart code needs no changes)."""
+    return None
 
 
 def end_dot(ax, x, y, color, size=46):
-    ax.scatter([x], [y], s=size, color=color, edgecolor=BG, linewidth=1.6, zorder=6, clip_on=False)
+    """No-op in the FiveThirtyEight style (kept so chart code needs no changes)."""
+    return None
 
 
 def label_end(ax, x, y, text, color, dy=0, dx=0.4, size=10.5, weight="semibold", dot=True):
@@ -118,35 +120,44 @@ def mono_ticks(fig):
 
 
 def finish(fig, title, subtitle, source, path, note=None):
-    fig.text(0.075, 0.95, title, fontsize=19.5, fontweight="bold", ha="left", va="top", color=TEXT)
-    fig.text(0.075, 0.875, subtitle, fontsize=12.5, ha="left", va="top", color=MUTED)
-    src = fig.text(0.075, 0.026, f"SOURCE: {source}".upper(), fontsize=8.5, color=MUTED, ha="left",
-                   va="bottom", fontfamily=MONO)
-    mark = fig.text(0.975, 0.026, "THANKSGIVING DINNER PRICE INDEX", fontsize=8.5, color=RED,
-                    fontweight="bold", ha="right", va="bottom", fontfamily=MONO)
+    ttl = fig.text(0.075, 0.95, title, fontsize=20, fontweight="bold", ha="left", va="top", color=TEXT)
+    sub = fig.text(0.075, 0.875, subtitle, fontsize=13, ha="left", va="top", color=MUTED)
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
-    fig_h = fig.bbox.height
-
-    def fit(txt, right_px):
-        """Wrap a text object so it ends before right_px."""
-        ext = txt.get_window_extent(r)
-        room = right_px - ext.x0
-        if ext.width > room:
-            chars = max(20, int(len(txt.get_text()) * room / ext.width))
-            txt.set_text(textwrap.fill(txt.get_text(), chars))
-            fig.canvas.draw()
-
-    # Source line: wrap if it would run into the project mark
-    fit(src, mark.get_window_extent(r).x0 - 20)
-    top = src.get_window_extent(r).y1 / fig_h
-    # Optional note: stacked above the source, wrapped to the full width
-    if note:
-        note_txt = fig.text(0.075, top + 0.012, note, fontsize=9.5, color=MUTED, ha="left", va="bottom",
-                            style="italic")
+    W, H = fig.bbox.width, fig.bbox.height
+    # Shrink a headline or subtitle that would run past the right edge
+    for txt, size, limit in ((ttl, 20, 0.88), (sub, 13, 0.9)):
+        w = txt.get_window_extent(r).width
+        if w > limit * W:
+            txt.set_fontsize(size * limit * W / w)
+    mark = fig.text(0.015, 0, "THANKSGIVING DINNER PRICE INDEX", fontsize=9, color="white",
+                    fontweight="bold", ha="left", va="center", fontfamily=MONO, zorder=11)
+    src = fig.text(0.985, 0, f"SOURCE: {source}".upper(), fontsize=8.5, color="white",
+                   ha="right", va="center", fontfamily=MONO, zorder=11, multialignment="right")
+    fig.canvas.draw()
+    # Wrap the source if it would run into the project mark
+    room = 0.985 * W - mark.get_window_extent(r).x1 - 30
+    ext = src.get_window_extent(r)
+    if ext.width > room:
+        chars = max(20, int(len(src.get_text()) * room / ext.width))
+        src.set_text(textwrap.fill(src.get_text(), chars))
         fig.canvas.draw()
-        fit(note_txt, 0.975 * fig.bbox.width)
-        top = note_txt.get_window_extent(r).y1 / fig_h
+    # Dark footer bar sized to the source text
+    bar_h = max(0.055, src.get_window_extent(r).height / H + 0.025)
+    fig.patches.append(Rectangle((0, 0), 1, bar_h, transform=fig.transFigure, color=FOOTER,
+                                 figure=fig, zorder=10))
+    mark.set_y(bar_h / 2); src.set_y(bar_h / 2)
+    top = bar_h
+    if note:
+        note_txt = fig.text(0.075, bar_h + 0.014, note, fontsize=9.5, color=MUTED, ha="left",
+                            va="bottom", style="italic")
+        fig.canvas.draw()
+        ext = note_txt.get_window_extent(r)
+        if ext.width > 0.91 * W:
+            chars = max(20, int(len(note) * 0.91 * W / ext.width))
+            note_txt.set_text(textwrap.fill(note, chars))
+            fig.canvas.draw()
+        top = note_txt.get_window_extent(r).y1 / H
     # Leave room above the footer for the x-axis tick labels
     fig.subplots_adjust(bottom=max(fig.subplotpars.bottom, top + 0.075))
     mono_ticks(fig)
