@@ -292,7 +292,7 @@ for ax, origin in zip(axes.flat, ORIGINS):
 for ax in axes.flat:
     cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
 axes[0, 0].legend(loc="upper left", fontsize=9)
-cs.finish(fig, "In backtests, the combined model misses October prices by about 8%",
+cs.finish_geo("us", fig, "In backtests, the combined model misses October prices by about 8%",
           "Retail whole frozen turkey, $/lb. Each panel predicts years it never saw, from predictors only.",
           "BLS via FRED; author's models", OUT / "8_turkey_price_ml_backtest.png")
 
@@ -313,6 +313,6 @@ cs.label_end(ax, afbf_pts.index[-1], afbf_pts.iloc[-1], "Farm Bureau\n(holiday, 
 ax.set_xlim(hist.index[0], rec.index[-1] + pd.DateOffset(months=2))
 fig.subplots_adjust(right=0.82)
 cs.unit_on_top(ax, fmt=lambda v: f"{v:.2f}", prefix="$")
-cs.finish(fig, "Rebuilding the turkey price BLS stopped publishing",
+cs.finish_geo("us", fig, "Rebuilding the turkey price BLS stopped publishing",
           "Retail whole frozen turkey, $/lb, monthly. Farm Bureau points are its holiday price, scaled to BLS's 2019 level.",
           "BLS, American Farm Bureau Federation; author's models", OUT / "9_turkey_price_nowcasting.png")

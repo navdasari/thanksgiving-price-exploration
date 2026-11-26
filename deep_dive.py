@@ -211,7 +211,7 @@ cs.unit_on_top(axes[0], suffix="%"); cs.unit_on_top(axes[1], prefix="$", suffix=
 fig.legend(*axes[0].get_legend_handles_labels(), ncol=4, loc="upper left", bbox_to_anchor=(0.065, 0.84),
            handlelength=1.4, columnspacing=1.6, fontsize=9.5)
 fig.subplots_adjust(top=0.7, right=0.97)
-cs.finish(fig, "The squeeze is widest at the bottom",
+cs.finish_geo("us", fig, "The squeeze is widest at the bottom",
           "Household types, 1995-2025. Essentials: shelter, utilities, groceries, health care, child care, vehicle insurance.",
           "BLS Consumer Expenditure Survey via FRED", OUT / "6_who_is_squeezed.png",
           note="Right panel omits married couples with young children (much higher incomes and a one-year spike in 2019).")
@@ -231,7 +231,7 @@ for yr, label in [(2005, "$6.00"), (2014, "$8.00"), (2017, "$11"), (2019, "$15")
                 fontsize=9, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=0.8))
 cs.baseline(ax, 0)
 cs.unit_on_top(ax, suffix=" hrs")
-cs.finish(fig, f"In NYC, Thanksgiving dinner takes {h.iloc[-1]:.0f} hours of minimum-wage work",
+cs.finish_geo("nyc", fig, f"In NYC, Thanksgiving dinner takes {h.iloc[-1]:.0f} hours of minimum-wage work",
           f"Hours at New York City's minimum wage to buy Thanksgiving dinner for 10 at NYC prices, {h.index.min()}-{h.index.max()}",
           "New York Post NYC price survey; BLS and BEA via FRED; NY Labor Law 652", OUT / "7_low_wage.png",
           note=f"Minimum wage for NYC employers with 11 or more workers; labels mark raises (now ${wage.nyc_min_wage.iloc[-1]:.2f}). "

@@ -292,7 +292,7 @@ cs.label_end(ax, latest, total[latest], f"U.S. average: ${total[latest]:.0f}", c
 cs.label_end(ax, latest, afbf[latest], f"${afbf[latest]:.0f}", cs.DARK, dy=-6, dot=False)
 cs.unit_on_top(ax, prefix="$")
 pct19 = 100 * (total_nyc[latest] / total_nyc[2019] - 1)
-cs.finish(fig, f"Thanksgiving dinner for 10 in NYC costs ${total_nyc[latest]:.0f}, {pct19:.0f}% more than in 2019",
+cs.finish_geo("nyc+us", fig, f"Thanksgiving dinner for 10 in NYC costs ${total_nyc[latest]:.0f}, {pct19:.0f}% more than in 2019",
           "Cost at Thanksgiving prices, as paid. Full menu: turkey, sides, rolls, pumpkin pie, apple cider and baking staples.",
           "New York Post NYC price survey; BLS and BEA via FRED; American Farm Bureau Federation", OUT / "1_dinner_cost.png",
           note=("NYC prices: 11 of 18 items use the New York Post's 2025 and 2026 NYC supermarket prices, scaled to "
@@ -313,8 +313,8 @@ cs.baseline(ax, 100)
 cs.unit_on_top(ax)
 gap = laspeyres[latest] - cpi_all_idx[latest]
 verdict = ("in step with" if abs(gap) < 1.5 else ("a bit less than" if gap < 0 else "a bit more than"))
-cs.finish(fig, f"Since 2019, the dinner's price has risen {verdict} prices overall",
-          "Price indexes, October 2019 = 100. Groceries and all prices are CPI.",
+cs.finish_geo("us", fig, f"Since 2019, the dinner's price has risen {verdict} prices overall",
+          "Price indexes, October 2019 = 100. Dinner at U.S. average prices; groceries and all prices are CPI.",
           "BLS via FRED, American Farm Bureau Federation", OUT / "2_indexes.png")
 
 # 3. YoY contributions
@@ -364,7 +364,7 @@ ax.set_yticks(ticks)
 ax.set_ylim(lo, hi)
 ax.yaxis.set_major_formatter(FuncFormatter(
     lambda v, _: f"+${v:g}" if v == max(ticks) else ("0" if v == 0 else f"{v:+g}")))
-cs.finish(fig, "Turkey drives most swings in the dinner's cost",
+cs.finish_geo("nyc", fig, "Turkey drives most swings in the dinner's cost",
           "Change in the cost of a dinner for 10 in NYC vs. the previous year's Thanksgiving",
           "New York Post NYC price survey; BLS and BEA via FRED", OUT / "3_contributions.png",
           note="2026 changes come from the Post's 2025-to-2026 NYC store prices; earlier years follow BLS price histories.")

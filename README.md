@@ -57,6 +57,20 @@ charts look the same on any machine.
 | `by_income.py` | Dinner and essentials by income fifth and by half | `by_income.csv`, `essentials_by_half.csv`, `week_of_spending.csv`, charts 4-5 |
 | `deep_dive.py` | 14 household groups, low-wage workers, robustness checks | `deep_dive_*.csv`, charts 6-7 |
 
+## Charts at a glance
+Each chart is labeled NYC or National above its headline.
+
+| Chart | Geography | Dinner prices from |
+|---|---|---|
+| 1 Dinner cost | NYC, with U.S. average for comparison | New York Post NYC survey + BLS |
+| 2 Price indexes | National | BLS U.S. averages |
+| 3 Item contributions | NYC | New York Post NYC survey + BLS |
+| 4 Essentials, bottom vs top half | National | (household spending, no dinner) |
+| 5 A week of spending by income fifth | National | BLS U.S. averages |
+| 6 Household types | National | (household spending, no dinner) |
+| 7 Hours at the minimum wage | NYC | New York Post NYC survey + BLS; NYC minimum wage |
+| 8-9 Turkey price model | National | BLS U.S. turkey price |
+
 ## Nowcasting the turkey price: ML and time-series ensemble (`turkey_price_ml_modeling.py`)
 Turkey is the basket's largest item (about 39% of its cost), and BLS stopped publishing its average retail price
 (whole frozen turkey, per lb) after February 2020. The script estimates it for March 2020

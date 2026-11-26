@@ -119,7 +119,20 @@ def mono_ticks(fig):
             lab.set_fontsize(10)
 
 
-def finish(fig, title, subtitle, source, path, note=None):
+GEO_LABELS = {
+    "nyc": ("NEW YORK CITY", RED),
+    "nyc+us": ("NEW YORK CITY  |  U.S. AVERAGE FOR COMPARISON", RED),
+    "us": ("NATIONAL (U.S.)", BLUE),
+}
+
+
+def finish(fig, title, subtitle, source, path, note=None, geo=None):
+    """geo: "nyc", "nyc+us" or "us" adds a label above the headline saying which geography
+    the chart covers."""
+    if geo:
+        label, color = GEO_LABELS[geo]
+        fig.text(0.075, 0.988, label, fontsize=9.5, fontweight="bold", color=color, ha="left",
+                 va="top", fontfamily=MONO)
     ttl = fig.text(0.075, 0.95, title, fontsize=20, fontweight="bold", ha="left", va="top", color=TEXT)
     sub = fig.text(0.075, 0.875, subtitle, fontsize=13, ha="left", va="top", color=MUTED)
     fig.canvas.draw()
@@ -163,3 +176,8 @@ def finish(fig, title, subtitle, source, path, note=None):
     mono_ticks(fig)
     fig.savefig(path)
     plt.close(fig)
+
+
+def finish_geo(geo, fig, *args, **kwargs):
+    """finish() with a geography label ("nyc", "nyc+us" or "us") above the headline."""
+    finish(fig, *args, geo=geo, **kwargs)

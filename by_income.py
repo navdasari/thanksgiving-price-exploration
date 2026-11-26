@@ -126,11 +126,11 @@ fig.legend(handles=[Patch(color=ESS_C, label="Essentials (shelter, utilities, gr
                     Patch(color=OTH_C, label="Everything else")],
            loc="upper left", bbox_to_anchor=(0.1, 0.83), ncol=3, handlelength=1.2, columnspacing=1.8)
 d = now.loc["Lowest 20%"]
-cs.finish(fig, f"For the poorest fifth, Thanksgiving dinner takes {d.dinner_pct_of_nonessential:.0f}% of what's left after essentials",
+cs.finish_geo("us", fig, f"For the poorest fifth, Thanksgiving dinner takes {d.dinner_pct_of_nonessential:.0f}% of what's left after essentials",
           f"A week of household spending, to scale. The same ${d.dinner_cost:.0f} dinner is {d.dinner_pct_of_week:.1f}% of the lowest fifth's week "
           f"and {now.loc['Highest 20%'].dinner_pct_of_week:.1f}% of the top fifth's.",
           "BLS Consumer Expenditure Survey and average prices via FRED", OUT / "5_week_of_spending.png",
-          note="Weekly spending = annual spending / 52. Households in the lowest fifth average about 1.5 people, so a dinner for 10 is a hosting cost.")
+          note="Weekly spending = annual spending / 52. Dinner at U.S. average prices (the NYC price is in chart 1). Households in the lowest fifth average about 1.5 people, so a dinner for 10 is a hosting cost.")
 
 # ---------- Chart 4: essentials as a share of income, bottom vs top half ----------
 # Bottom 50% = lowest two fifths + half of the middle fifth; top 50% = the rest.
@@ -172,7 +172,7 @@ axes[0].annotate("2004: survey starts\nestimating missing income", (2004, halves
 for ax in axes:
     cs.unit_on_top(ax, suffix="%")
 fig.subplots_adjust(right=0.95, wspace=0.12)
-cs.finish(fig, "The bottom half spends about 62% of its income on essentials; the top half, 25%",
+cs.finish_geo("us", fig, "The bottom half spends about 62% of its income on essentials; the top half, 25%",
           "Housing (rent or mortgage, property costs, utilities), health care and groceries, % of before-tax income, 1995-2025",
           "BLS Consumer Expenditure Survey via FRED", OUT / "4_essentials_by_half.png",
           note="The bottom half reports spending about 120% of its income (under-reported income, benefits, retirees using savings), so its shares are approximate.")
