@@ -8,9 +8,8 @@ Run build_index.py first. Questions:
      care and babysitting) + vehicle insurance.
   C. Does it matter whether the budget is spending or before-tax income?
   D. How much is left after broad essentials, in real dollars, and how has that changed?
-  E. Low-wage workers: dinner cost in hours at the federal minimum wage and as a share
-     of first-decile full-time weekly earnings.
-  F. Price level vs low-wage pay since January 2021 (prices never come back down).
+  E. Low-wage workers: dinner cost in hours at the federal minimum wage.
+  F. Prices and rent since January 2021, and the federal minimum wage's lost value.
   G. Rent vs overall prices; household financial stress (saving rate, card delinquency).
 
 All Consumer Expenditure Survey (CE) data are annual group averages, 1995-2025, via FRED.
@@ -123,26 +122,21 @@ print(table[[c for c in table.columns if c.startswith("dinner")]].round(1).to_st
 
 # ---------------- E. Low-wage workers ----------------
 minwage = fred("FEDMINNFRWG", 10)
-decile1 = fred("LEU0252911200Q", 7)  # Q3, full-time weekly earnings, 10th percentile
-wage = pd.DataFrame({"dinner": dinner, "federal_min_wage": minwage.reindex(dinner.index),
-                     "decile1_weekly": decile1.reindex(dinner.index)})
+wage = pd.DataFrame({"dinner": dinner, "federal_min_wage": minwage.reindex(dinner.index)})
 wage["hours_at_federal_min"] = wage.dinner / wage.federal_min_wage
-wage["pct_of_decile1_week"] = 100 * wage.dinner / wage.decile1_weekly
 wage.round(2).to_csv(OUT / "deep_dive_wages.csv")
 print("\n== E. Low-wage workers ==")
 print(wage.loc[[1995, 2000, 2005, 2009, 2010, 2015, 2019, 2021, 2022, 2023, 2024, 2025, 2026]].round(2).to_string())
 print("hours at federal minimum, 2026 rank (1 = most hours):",
       int(wage.hours_at_federal_min.rank(ascending=False).loc[2026]), "of", wage.hours_at_federal_min.notna().sum())
 
-# ---------------- F. Price level vs low-wage pay ----------------
+# ---------------- F. Prices, rent and the minimum wage ----------------
 cpi_m = fred("CPIAUCSL")
-dec_q = fred("LEU0252911200Q")
 rent = fred("CUUR0000SEHA")
-base_p, base_w = cpi_m.loc["2021-01-01"], dec_q.loc["2021-01-01"]
+base_p = cpi_m.loc["2021-01-01"]
 print("\n== F. Since Jan 2021 ==")
 print(f"  CPI all items:              {100*(cpi_m.iloc[-1]/base_p-1):+.1f}%  (to {cpi_m.index[-1]:%b %Y})")
 print(f"  Rent of primary residence:  {100*(rent.iloc[-1]/rent.loc['2021-01-01']-1):+.1f}%")
-print(f"  10th-pct full-time pay:     {100*(dec_q.iloc[-1]/base_w-1):+.1f}%  (to {dec_q.index[-1]:%b %Y})")
 print(f"  Federal minimum wage:       +0.0%  ($7.25 since July 2009)")
 print(f"  Since July 2009, CPI is up {100*(cpi_m.iloc[-1]/cpi_m.loc['2009-07-01']-1):.0f}%, "
       f"so $7.25 buys {100*(cpi_m.loc['2009-07-01']/cpi_m.iloc[-1]):.0f}% of what it did")
@@ -181,9 +175,6 @@ for col, label in [("basket_cost", "Model turkey (main)"), ("basket_cost_afbf_tu
     h_alt = alt / minwage.reindex(alt.index)
     print(f"  Hours at federal minimum: 2019 {h_alt[2019]:.2f}, 2026 {h_alt[2026]:.2f}; "
           f"2026 rank (1 = most hours) {int(h_alt.rank(ascending=False).loc[2026])}/{h_alt.notna().sum()}")
-    p_alt = 100 * alt / wage.decile1_weekly
-    print(f"  % of 10th-pct weekly pay: 2019 {p_alt[2019]:.1f}, 2026 {p_alt[2026]:.1f}; "
-          f"2026 rank (1 = most affordable) {int(p_alt.rank().loc[2026])}/{p_alt.notna().sum()}")
 
 # ---------------- Charts ----------------
 import chart_style as cs
