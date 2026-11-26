@@ -212,29 +212,17 @@ cs.finish(fig, "The squeeze is widest at the bottom",
           note="Right panel omits married couples with young children (much higher incomes and a one-year spike in 2019).")
 
 w = wage.dropna(subset=["hours_at_federal_min"])
-fig, axes = cs.figure(1, 2, width=12, height=6.2)
-d = w.pct_of_decile1_week.dropna()
-top0 = 2 * int(np.ceil(w.hours_at_federal_min.max() * 1.15 / 2))
-top1 = 2 * int(np.ceil(d.max() * 1.15 / 2))
-axes[0].set_ylim(0, top0); axes[1].set_ylim(0, top1)
-cs.soft_fill(axes[0], w.index, w.hours_at_federal_min, cs.RED, floor=0, alpha=0.12)
-cs.soft_fill(axes[1], d.index, d, cs.BLUE, floor=0, alpha=0.12)
-axes[0].plot(w.index, w.hours_at_federal_min, color=cs.RED)
-axes[1].plot(d.index, d, color=cs.BLUE)
-cs.end_dot(axes[0], w.index[-1], w.hours_at_federal_min.iloc[-1], cs.RED)
-cs.end_dot(axes[1], d.index[-1], d.iloc[-1], cs.BLUE)
-axes[0].annotate(f"{w.hours_at_federal_min.iloc[-1]:.1f} hrs", (w.index[-1], w.hours_at_federal_min.iloc[-1]),
-                 xytext=(0, 12), textcoords="offset points", ha="center", color=cs.RED, fontweight="semibold")
-axes[1].annotate(f"{d.iloc[-1]:.1f}%", (d.index[-1], d.iloc[-1]),
-                 xytext=(0, 12), textcoords="offset points", ha="center", color=cs.BLUE, fontweight="semibold")
-axes[0].set_title("Hours of work at the federal minimum wage")
-axes[1].set_title("% of a week's pay, 10th-percentile full-time worker")
-cs.baseline(axes[0], 0)
-cs.baseline(axes[1], 0)
-axes[0].annotate("$7.25 since 2009", (2009, w.hours_at_federal_min[2009]), xytext=(2001, 3.2),
-                 fontsize=9.5, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=1))
-cs.unit_on_top(axes[0], suffix=" hrs"); cs.unit_on_top(axes[1], suffix="%")
-fig.subplots_adjust(right=0.97)
+h = w.hours_at_federal_min
+fig, ax = cs.figure()
+ax.set_ylim(0, 2 * int(np.ceil(h.max() * 1.15 / 2)))
+ax.set_xlim(h.index.min() - 1, h.index.max() + 1)
+ax.plot(h.index, h, color=cs.RED)
+ax.annotate(f"{h.iloc[-1]:.1f} hours", (h.index[-1], h.iloc[-1]), xytext=(0, 12), textcoords="offset points",
+            ha="center", color=cs.RED, fontweight="semibold")
+ax.annotate("Federal minimum wage stuck\nat $7.25 since 2009", (2009, h[2009]), xytext=(2001, h.max() * 0.35),
+            fontsize=10, color=cs.MUTED, arrowprops=dict(arrowstyle="-", color=cs.MUTED, lw=1))
+cs.baseline(ax, 0)
+cs.unit_on_top(ax, suffix=" hrs")
 cs.finish(fig, "For minimum-wage workers, the dinner costs more work",
-          "Thanksgiving dinner for 10, 1995-2026",
+          f"Hours of work at the federal minimum wage to buy Thanksgiving dinner for 10, {h.index.min()}-{h.index.max()}",
           "BLS via FRED, U.S. Department of Labor", OUT / "7_low_wage.png")
