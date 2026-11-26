@@ -5,7 +5,8 @@ BLS average retail prices (via FRED) and compared with prices, wages and househo
 The menu builds on the American Farm Bureau Federation's: turkey, potatoes, sweet potatoes,
 stuffing, rolls, cranberries, peas, green beans, a veggie tray, pumpkin pie with whipped
 cream, apple cider, milk and baking staples. The turkey price BLS stopped publishing in 2020
-is rebuilt with backtested time-series and machine-learning models.
+is rebuilt with backtested time-series and machine-learning models. Full methods and
+limitations are in the [technical appendix](docs/technical_appendix.html).
 
 ## Summary
 - **The cost-of-living squeeze hits the bottom hardest.** From 2017-19 to 2023-25,

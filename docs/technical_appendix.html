@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Technical Appendix</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF8F3; --surface:#FFFFFF; --ink:#2A211B; --muted:#6B5E52; --line:#E7DED2;
+  --accent:#A3243B; --pumpkin:#D9692A; --gold:#E0A33A; --sage:#6F8A61; --pine:#3F5E4A;
+  --obs:#3F5E4A; --est:#D9692A; --imp:#C9B9A3; --code-bg:#F4EEE6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#191512; --surface:#221D19; --ink:#EFE7DD; --muted:#B3A595; --line:#3A322B;
+    --accent:#E0687C; --pumpkin:#EE8A4E; --gold:#E8B95E; --sage:#9DB78F; --pine:#86B096;
+    --obs:#86B096; --est:#EE8A4E; --imp:#6B5D4F; --code-bg:#2B241F;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#191512; --surface:#221D19; --ink:#EFE7DD; --muted:#B3A595; --line:#3A322B;
+  --accent:#E0687C; --pumpkin:#EE8A4E; --gold:#E8B95E; --sage:#9DB78F; --pine:#86B096;
+  --obs:#86B096; --est:#EE8A4E; --imp:#6B5D4F; --code-bg:#2B241F;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 Inter,system-ui,sans-serif}
+.wrap{max-width:1120px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-right)) 80px max(16px,env(safe-area-inset-left));display:grid;grid-template-columns:220px minmax(0,1fr);gap:56px}
+header.hero{max-width:1120px;margin:0 auto;padding:64px max(16px,env(safe-area-inset-right)) 32px max(16px,env(safe-area-inset-left))}
+.eyebrow{font:500 12px/1 "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font:650 clamp(34px,5vw,52px)/1.08 Fraunces,Georgia,serif;margin:14px 0 14px;letter-spacing:-.01em}
+.lede{font-size:19px;color:var(--muted);max-width:760px;margin:0}
+.meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px 20px;font:13px "JetBrains Mono",monospace;color:var(--muted)}
+.rule{height:4px;background:linear-gradient(90deg,var(--accent) 0 25%,var(--pumpkin) 25% 50%,var(--gold) 50% 75%,var(--pine) 75%);border-radius:2px;margin-top:28px;max-width:180px}
+nav.toc{position:sticky;top:24px;align-self:start;font-size:14px;padding-top:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;border-left:2px solid var(--line)}
+nav.toc li a{display:block;padding:5px 0 5px 14px;color:var(--muted);text-decoration:none;margin-left:-2px;border-left:2px solid transparent}
+nav.toc li a:hover{color:var(--ink);border-left-color:var(--accent)}
+nav.toc .grp{font:600 11px/1 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding:18px 0 6px 14px}
+main{min-width:0}
+section{padding-top:28px}
+h2{font:650 30px/1.2 Fraunces,Georgia,serif;margin:28px 0 6px;scroll-margin-top:20px}
+h2 .num{font:500 14px "JetBrains Mono",monospace;color:var(--accent);display:block;margin-bottom:6px;letter-spacing:.08em}
+h3{font:600 18px/1.35 Inter,sans-serif;margin:30px 0 8px;scroll-margin-top:20px}
+p{margin:0 0 14px}
+a{color:var(--accent)}
+.part{margin-top:56px;padding:22px 0 0;border-top:1px solid var(--line)}
+.part-label{font:600 12px "JetBrains Mono",monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+code,.mono{font-family:"JetBrains Mono",monospace;font-size:.86em}
+code{background:var(--code-bg);padding:1px 6px;border-radius:4px}
+.eq{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--pumpkin);border-radius:8px;padding:14px 18px;margin:14px 0 18px;font:14.5px/1.7 "JetBrains Mono",monospace;overflow-x:auto;white-space:pre}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:16px 0}
+.callout{border-left:3px solid var(--accent);background:var(--surface);border-radius:0 10px 10px 0;padding:14px 18px;margin:18px 0;font-size:15px}
+.callout strong{color:var(--accent)}
+.tbl{overflow-x:auto;margin:14px 0 20px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 11.5px Inter,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--code-bg);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:right;white-space:nowrap}
+tr.best td{font-weight:600}
+.cap{font-size:13px;color:var(--muted);margin:-10px 0 18px}
+.pill{display:inline-block;font:600 11px/1 Inter,sans-serif;padding:4px 8px;border-radius:99px;letter-spacing:.03em;white-space:nowrap}
+.p-obs{background:color-mix(in srgb,var(--obs) 20%,transparent);color:var(--obs)}
+.p-anc{background:color-mix(in srgb,var(--pine) 10%,transparent);color:var(--pine);outline:1px dashed var(--pine)}
+.p-est{background:color-mix(in srgb,var(--est) 20%,transparent);color:var(--est)}
+.p-imp{background:color-mix(in srgb,var(--imp) 45%,transparent);color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;color:var(--muted);margin:10px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.bars{display:grid;gap:8px;margin:10px 0 6px}
+.bar{display:grid;grid-template-columns:48px minmax(0,1fr) 64px;gap:12px;align-items:center;font-size:13px}
+.bar .yr{font-family:"JetBrains Mono",monospace;color:var(--muted)}
+.bar .track{display:flex;height:22px;border-radius:5px;overflow:hidden;background:var(--line)}
+.bar .track span{display:block;height:100%}
+.bar .tot{text-align:right;font-family:"JetBrains Mono",monospace}
+.s-obs{background:var(--obs)} .s-est{background:var(--est)} .s-imp{background:var(--imp)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:16px 0}
+.grid2 .card{margin:0}
+.card h4{margin:6px 0 6px;font:600 15px Inter,sans-serif}
+.card p{font-size:14.5px;margin:0;color:var(--muted)}
+.lim{counter-reset:lim;list-style:none;padding:0;margin:10px 0}
+.lim>li{counter-increment:lim;position:relative;padding:14px 0 14px 46px;border-bottom:1px solid var(--line)}
+.lim>li:last-child{border-bottom:0}
+.lim>li::before{content:counter(lim,decimal-leading-zero);position:absolute;left:0;top:15px;font:500 13px "JetBrains Mono",monospace;color:var(--accent)}
+.lim strong{display:block;margin-bottom:2px}
+.sev{float:right;margin-left:10px}
+.sev-h{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.sev-m{background:color-mix(in srgb,var(--gold) 22%,transparent);color:color-mix(in srgb,var(--gold) 60%,var(--ink))}
+.sev-l{background:var(--code-bg);color:var(--muted)}
+ul.tight{margin:6px 0 14px;padding-left:20px} ul.tight li{margin:3px 0}
+footer{grid-column:1/-1;border-top:1px solid var(--line);padding-top:20px;font-size:13px;color:var(--muted)}
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:0}
+  nav.toc{position:static;margin-bottom:8px}
+  nav.toc ol{columns:2;column-gap:16px}
+  h2{font-size:25px}
+  .lede{font-size:17px}
+}
+@media (max-width:480px){ nav.toc ol{columns:1} .bar{grid-template-columns:40px minmax(0,1fr) 56px} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="eyebrow">Thanksgiving Dinner Price Index · Technical Appendix</div>
+  <h1>Methods, data provenance and limitations</h1>
+  <p class="lede">How the index prices a full Thanksgiving dinner for 10 every October from 1995 to 2026, nationally and for New York City; how the discontinued BLS turkey price is reconstructed; and where the numbers are observed, estimated or imputed.</p>
+  <div class="meta"><span>Version: November 2026</span><span>Code: github.com/navdasari/thanksgiving-price-index</span><span>Reproduce: <code>python run_all.py</code></span></div>
+  <div class="rule"></div>
+</header>
+
+<div class="wrap">
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li class="grp">Part A · Methods</li>
+    <li><a href="#a1">A1 Overview</a></li>
+    <li><a href="#a2">A2 Basket construction</a></li>
+    <li><a href="#a3">A3 Item prices</a></li>
+    <li><a href="#a4">A4 Turkey reconstruction</a></li>
+    <li><a href="#a5">A5 New York City prices</a></li>
+    <li><a href="#a6">A6 Index numbers</a></li>
+    <li><a href="#a7">A7 Affordability measures</a></li>
+    <li class="grp">Part B · Limitations</li>
+    <li><a href="#b1">B1 Observed, estimated, imputed</a></li>
+    <li><a href="#b2">B2 Price limitations</a></li>
+    <li><a href="#b3">B3 Turkey model</a></li>
+    <li><a href="#b4">B4 NYC limitations</a></li>
+    <li><a href="#b5">B5 Household data</a></li>
+    <li><a href="#b6">B6 Interpretation</a></li>
+  </ol>
+</nav>
+
+<main>
+<div class="part-label">Part A · Methodological appendix</div>
+
+<section id="a1">
+<h2><span class="num">A1</span>Overview</h2>
+<p>The index answers one question: <em>what does the same Thanksgiving dinner for 10 cost each October, and how does that cost compare with prices, wages and household budgets?</em> It holds the menu and quantities fixed and prices each item each year. October is used because it is the last BLS average-price month before the holiday and the month the American Farm Bureau Federation (AFBF) survey is closest to.</p>
+<div class="grid2">
+  <div class="card"><span class="pill p-obs">Step 1</span><h4>Fix the menu</h4><p>18 items in set quantities, built on the AFBF menu and expanded to a fuller meal.</p></div>
+  <div class="card"><span class="pill p-obs">Step 2</span><h4>Price each item</h4><p>BLS average prices where they exist; a 2026 anchor price moved back with the closest CPI component where they don't.</p></div>
+  <div class="card"><span class="pill p-est">Step 3</span><h4>Rebuild turkey</h4><p>BLS stopped the turkey series after Feb 2020; a backtested ensemble estimates it from series still published.</p></div>
+  <div class="card"><span class="pill p-imp">Step 4</span><h4>Localize and compare</h4><p>NYC prices from a New York Post store survey, and comparisons with CPI, wages and Consumer Expenditure Survey budgets.</p></div>
+</div>
+<p>Headline results this appendix supports: the national dinner costs <strong>$87.39</strong> in 2026 ($42.01 in 1995, $66.73 in 2019, $87.22 in 2025). The NYC version costs <strong>$167.77</strong> ($141.28 in 2025, $109.16 in 2019).</p>
+</section>
+
+<section id="a2">
+<h2><span class="num">A2</span>Basket construction</h2>
+<p>The AFBF classic menu ($58.63 in 2026) and a first nine-item version of this basket ($61) both proved too spare for a real dinner for 10. The final basket keeps the AFBF core and adds the side dishes, dessert, drink and baking staples a typical host buys. Quantities are fixed in every year: this is a Laspeyres (fixed-basket) design, so the index measures price change, not changing tastes.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>Item</th><th>Quantity</th><th>Price source</th><th>Status</th><th class="n">2026 cost</th></tr></thead>
+<tbody>
+<tr><td>Turkey (whole, frozen)</td><td>16 lb</td><td>BLS <code>APU0000706311</code> to Feb 2020, then model</td><td><span class="pill p-obs">Observed</span> → <span class="pill p-est">Estimated</span></td><td class="n">$34.46</td></tr>
+<tr><td>Russet potatoes</td><td>5 lb</td><td>BLS <code>APU0000712112</code></td><td><span class="pill p-obs">Observed</span></td><td class="n">$4.95</td></tr>
+<tr><td>Sweet potatoes</td><td>3 lb</td><td>Anchor $4.20; fruits &amp; vegetables CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$4.20</td></tr>
+<tr><td>Stuffing mix</td><td>14 oz</td><td>Anchor $3.91; bakery CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$3.91</td></tr>
+<tr><td>Dinner rolls</td><td>1 dozen</td><td>Anchor $3.81; bakery CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$3.81</td></tr>
+<tr><td>Cranberries</td><td>12 oz bag</td><td>Anchor $2.48; fruits &amp; vegetables CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$2.48</td></tr>
+<tr><td>Frozen peas</td><td>1 lb</td><td>Anchor $1.99; fruits &amp; vegetables CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$1.99</td></tr>
+<tr><td>Green beans (frozen)</td><td>1 lb</td><td>Frozen-pea price as proxy</td><td><span class="pill p-imp">Imputed</span></td><td class="n">$1.99</td></tr>
+<tr><td>Veggie tray (carrots &amp; celery)</td><td>1 lb</td><td>Anchor $1.31; fruits &amp; vegetables CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$1.31</td></tr>
+<tr><td>Pumpkin pie mix</td><td>30 oz can</td><td>Anchor $4.24; fruits &amp; vegetables CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$4.24</td></tr>
+<tr><td>Pie crusts (frozen)</td><td>2</td><td>Anchor $3.28; bakery CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$3.28</td></tr>
+<tr><td>Whipping cream</td><td>½ pint</td><td>Anchor $1.84; dairy CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$1.84</td></tr>
+<tr><td>Apple cider</td><td>1 gallon</td><td>Anchor $6.99 (listings); nonalcoholic beverages CPI</td><td><span class="pill p-anc">Anchor</span></td><td class="n">$6.99</td></tr>
+<tr><td>Milk (whole)</td><td>1 gallon</td><td>BLS <code>APU0000709112</code></td><td><span class="pill p-obs">Observed</span></td><td class="n">$4.10</td></tr>
+<tr><td>Butter</td><td>1 lb</td><td>BLS; dairy-CPI bridge 2012–18</td><td><span class="pill p-obs">Observed</span></td><td class="n">$3.98</td></tr>
+<tr><td>Eggs (Grade A large)</td><td>1 dozen</td><td>BLS <code>APU0000708111</code></td><td><span class="pill p-obs">Observed</span></td><td class="n">$2.32</td></tr>
+<tr><td>Flour</td><td>1 lb</td><td>BLS <code>APU0000701111</code></td><td><span class="pill p-obs">Observed</span></td><td class="n">$0.54</td></tr>
+<tr><td>Sugar</td><td>1 lb</td><td>BLS <code>APU0000715211</code></td><td><span class="pill p-obs">Observed</span></td><td class="n">$1.00</td></tr>
+<tr><td colspan="4"><strong>Total, dinner for 10</strong></td><td class="n"><strong>$87.39</strong></td></tr>
+</tbody></table></div>
+<p class="cap">Status shown for 2026. Anchor items are observed in 2026 only; every earlier year of an anchor item is imputed (see B1). CPI components: bakery <code>CUUR0000SAF111</code>, fruits &amp; vegetables <code>SAF113</code>, dairy <code>SEFJ</code>, nonalcoholic beverages <code>SAF114</code>.</p>
+<p><strong>Anchor prices.</strong> Ten anchors are the AFBF 2026 survey prices for the matching item. Apple cider is not in the AFBF survey: its $6.99 anchor is the median of four November 2026 grocery listings for a gallon (Costco $6.99 and $5.51, Meijer $7.49, Price Chopper $6.99). AFBF publishes no green-bean price, so the frozen-pea price stands in.</p>
+</section>
+
+<section id="a3">
+<h2><span class="num">A3</span>Item prices</h2>
+<h3>BLS average prices</h3>
+<p>Six items (and turkey through 2019) come straight from the BLS Average Price Data (CPI program), downloaded from FRED as monthly U.S. city averages. The October value is used.</p>
+<h3>Anchor-and-index backcasting</h3>
+<p>For items BLS does not price, a single observed 2026 price is carried back through time with the CPI component that best matches the item:</p>
+<div class="eq">price(item, y) = anchor(item, 2026) × CPI_c(October y) / CPI_c(October 2026)</div>
+<p>where <em>c</em> is the item's CPI component. This keeps each item's 2026 level fixed to a real price and lets its history follow the measured price trend of its group. It assumes the item's price moved in proportion to its group's index, which is the main source of imputation error (B2).</p>
+<h3>Missing months and series breaks</h3>
+<ul class="tight">
+  <li><strong>Shutdown months.</strong> BLS did not publish October 2013 (turkey) or October 2025 (all items) because of federal shutdowns. The October value is the average of September and November; where one is also missing (russet potatoes lack November 2025), the month that exists is used.</li>
+  <li><strong>Butter 2012–18.</strong> The BLS butter series has no observations in these years. Values are bridged from the last observed price with the dairy CPI.</li>
+</ul>
+</section>
+
+<section id="a4">
+<h2><span class="num">A4</span>Turkey reconstruction</h2>
+<p>Turkey is about 39% of the dinner's cost, and BLS stopped publishing its retail price (<code>APU0000706311</code>, whole frozen, per lb) after February 2020. Any recent dinner total therefore depends on an estimate. <code>turkey_price_ml_modeling.py</code> estimates March 2020 to October 2026 from series that are still published, and chooses its method by how well each candidate predicts known prices under conditions that mimic the real gap.</p>
+
+<h3>Target and predictors</h3>
+<p>The model predicts the turkey price <em>relative to grocery prices</em>, then converts back to dollars:</p>
+<div class="eq">target(t) = log( turkey(t) / CPI_food_at_home(t) )
+turkey_hat(t) = exp( prediction(t) ) × CPI_food_at_home(t)</div>
+<p>Modeling the ratio removes the general inflation trend so models learn turkey-specific swings. All predictors are monthly and divided by the food-at-home CPI:</p>
+<div class="tbl"><table>
+<thead><tr><th>Predictor</th><th>Series</th><th>Transformations</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td>Processed turkey PPI</td><td><code>PCU3116153116157</code></td><td>Current; 3-, 6-, 12-month moving averages; 12-month lag</td><td>Wholesale cost; shelf prices follow it slowly</td></tr>
+<tr><td>Slaughter turkey PPI</td><td><code>WPS014201</code></td><td>Current; 6-, 12-month averages</td><td>Live-bird price, earlier in the supply chain</td></tr>
+<tr><td>Retail chicken</td><td>BLS average price</td><td>Current; 6-month average</td><td>Closest retail substitute still published</td></tr>
+<tr><td>Eggs</td><td>BLS average price</td><td>3-month average</td><td>Bird-flu signal for poultry supply</td></tr>
+<tr><td>Corn, soybean meal</td><td><code>PMAIZMTUSDM</code>, <code>PSMEAUSDM</code></td><td>12-month averages</td><td>Feed cost</td></tr>
+<tr><td>Calendar</td><td>—</td><td>Month dummies</td><td>Seasonal holiday pricing</td></tr>
+</tbody></table></div>
+
+<h3>Candidate models</h3>
+<div class="tbl"><table>
+<thead><tr><th>Model</th><th>Specification</th></tr></thead>
+<tbody>
+<tr><td>Chicken ratio</td><td>Turkey = chicken × average turkey/chicken ratio over the final 24 training months</td></tr>
+<tr><td>Wholesale ratio</td><td>Same, using the processed-turkey PPI</td></tr>
+<tr><td>Linear regression</td><td>OLS on all predictors</td></tr>
+<tr><td>Elastic net</td><td><code>ElasticNetCV</code>, L1 ratio ∈ {0.1, 0.5, 0.9, 1.0}, 5-fold time-series cross-validation</td></tr>
+<tr><td>Gradient boosting</td><td><code>HistGradientBoostingRegressor</code>: depth 3, learning rate 0.05, 300 iterations, L2 = 1.0, min leaf 20</td></tr>
+<tr><td>Regression with AR(1) errors</td><td>SARIMAX on a reduced predictor set (processed PPI 12- and 3-month averages, slaughter 6-month, chicken, eggs 3-month, months); the Kalman filter skips the missing October 2013</td></tr>
+<tr><td><strong>Combined</strong></td><td>Equal-weight average of all six, in logs</td></tr>
+</tbody></table></div>
+
+<h3>Backtest design</h3>
+<p>Real-time conditions are recreated four times. Each backtest trains on data from January 1993 through February of 2004, 2007, 2010 or 2013, then predicts up to <strong>80 months</strong> ahead (the length of the real gap, Mar 2020–Oct 2026) using only the predictors, never the turkey prices in the test window. Predictions are scored against actual BLS prices. This produces 2,219 forecast errors by model, origin and horizon.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>Model</th><th class="n">RMSE, all months</th><th class="n">MAE, Octobers</th><th class="n">Mean error</th><th class="n">Worst October</th><th class="n">DM vs combined</th><th class="n">p</th></tr></thead>
+<tbody>
+<tr class="best"><td>Combined</td><td class="n">8.54%</td><td class="n">8.26%</td><td class="n">−0.89%</td><td class="n">25.70%</td><td class="n">—</td><td class="n">—</td></tr>
+<tr><td>Wholesale ratio</td><td class="n">10.51%</td><td class="n">8.52%</td><td class="n">+2.03%</td><td class="n">25.65%</td><td class="n">1.75</td><td class="n">0.081</td></tr>
+<tr><td>Elastic net</td><td class="n">8.56%</td><td class="n">8.55%</td><td class="n">−1.68%</td><td class="n">27.59%</td><td class="n">0.08</td><td class="n">0.938</td></tr>
+<tr><td>Chicken ratio</td><td class="n">10.39%</td><td class="n">8.76%</td><td class="n">−0.69%</td><td class="n">26.37%</td><td class="n">2.40</td><td class="n">0.016</td></tr>
+<tr><td>Gradient boosting</td><td class="n">9.09%</td><td class="n">8.99%</td><td class="n">−1.71%</td><td class="n">25.03%</td><td class="n">1.74</td><td class="n">0.083</td></tr>
+<tr><td>Linear regression</td><td class="n">9.43%</td><td class="n">9.41%</td><td class="n">−1.61%</td><td class="n">29.68%</td><td class="n">1.75</td><td class="n">0.081</td></tr>
+<tr><td>AR(1) errors</td><td class="n">9.35%</td><td class="n">9.49%</td><td class="n">−1.64%</td><td class="n">22.86%</td><td class="n">2.07</td><td class="n">0.038</td></tr>
+</tbody></table></div>
+<p class="cap">Errors are in log points (≈ %). Diebold-Mariano tests use squared loss with Newey-West standard errors (12 lags); a positive statistic means the combined model has lower loss. Ranked by October MAE.</p>
+<p>The combined model has the lowest error in all months and in Octobers. It is significantly better than the chicken ratio and the AR(1) model at the 5% level, and no model is significantly better than it. Its October error by horizon year (years 1–7 ahead) is 9.3, 6.4, 7.8, 10.2, 8.4, 7.1 and 9.7%, so accuracy does not decay much over the 80-month gap.</p>
+<div class="callout"><strong>Disclosure.</strong> The first selection rule picked the single best model by October error; the winner changed with small specification changes, which showed the ranking was noise. The equal-weight combination was added afterwards. It also ranks first under the original rule, but its choice was made after seeing backtest results.</div>
+
+<h3>Uncertainty band</h3>
+<p>The 80% band is empirical: for each horizon year, the 10th and 90th percentiles of the combined model's backtest errors are applied to the estimate. It assumes future errors look like past ones.</p>
+
+<h3>Reconstruction and external check</h3>
+<p>The AFBF survey publishes a holiday turkey price every year, which the model never sees. Changes since 2019 (BLS October 2019: $1.601/lb):</p>
+<div class="tbl"><table>
+<thead><tr><th>October</th><th class="n">Estimate $/lb</th><th class="n">80% band</th><th class="n">Model vs 2019</th><th class="n">AFBF vs 2019</th><th class="n">Chicken ratio vs 2019</th></tr></thead>
+<tbody>
+<tr><td>2020</td><td class="n">1.66</td><td class="n">1.54–1.84</td><td class="n">+3.8%</td><td class="n">−6.8%</td><td class="n">+1.3%</td></tr>
+<tr><td>2021</td><td class="n">1.85</td><td class="n">1.67–2.05</td><td class="n">+15.5%</td><td class="n">+15.3%</td><td class="n">−2.4%</td></tr>
+<tr><td>2022</td><td class="n">2.21</td><td class="n">1.97–2.46</td><td class="n">+37.8%</td><td class="n">+39.2%</td><td class="n">+19.4%</td></tr>
+<tr><td>2023</td><td class="n">2.11</td><td class="n">1.93–2.43</td><td class="n">+31.8%</td><td class="n">+31.5%</td><td class="n">+23.4%</td></tr>
+<tr><td>2024</td><td class="n">1.88</td><td class="n">1.68–2.13</td><td class="n">+17.3%</td><td class="n">+23.4%</td><td class="n">+27.3%</td></tr>
+<tr><td>2025</td><td class="n">2.12</td><td class="n">1.95–2.32</td><td class="n">+32.6%</td><td class="n">+3.4%</td><td class="n">+31.5%</td></tr>
+<tr><td>2026</td><td class="n">2.15</td><td class="n">2.08–2.42</td><td class="n">+34.5%</td><td class="n">+13.9%</td><td class="n">+29.8%</td></tr>
+</tbody></table></div>
+<p>The model tracks AFBF closely for 2021–23 and diverges in 2025–26, when bird flu pushed wholesale prices up while AFBF's volunteer shoppers recorded low holiday sale prices. The basket uses the regular-price estimate. The dinner total under alternative turkeys is reported for transparency: with the AFBF turkey, $79.72 (2025) and $82.09 (2026); with the chicken-ratio turkey, $92.76 and $91.93.</p>
+</section>
+
+<section id="a5">
+<h2><span class="num">A5</span>New York City prices</h2>
+<p>The NYC series (chart 1 only) combines direct store prices with a regional price level.</p>
+<h3>Items priced from the New York Post survey</h3>
+<p>The New York Post priced a Thanksgiving shopping list at NYC supermarkets in November 2025 and 2026 (list totals $160.30 and $184.43; <code>data/nyc_post_prices.csv</code>). Eleven Post items match the menu and are scaled to its quantities:</p>
+<div class="tbl"><table>
+<thead><tr><th>Menu item</th><th>Post item</th><th class="n">Scale</th><th class="n">NYC 2025</th><th class="n">NYC 2026</th><th class="n">Post change</th><th class="n">BLS/CPI change</th></tr></thead>
+<tbody>
+<tr><td>Turkey</td><td>Bell &amp; Evans, 20 lb</td><td class="n">× 0.8</td><td class="n">$54.24</td><td class="n">$63.84</td><td class="n">+17.7%</td><td class="n">+1.4%</td></tr>
+<tr><td>Sweet potatoes</td><td>Yams, per lb</td><td class="n">× 3</td><td class="n">$5.97</td><td class="n">$5.97</td><td class="n">0%</td><td class="n">+4.9%</td></tr>
+<tr><td>Stuffing mix</td><td>Stove Top, 6 oz</td><td class="n">× 14/6</td><td class="n">$9.31</td><td class="n">$11.64</td><td class="n">+25.1%</td><td class="n">+2.1%</td></tr>
+<tr><td>Dinner rolls</td><td>Pillsbury Crescent</td><td class="n">× 1.5</td><td class="n">$8.98</td><td class="n">$8.98</td><td class="n">0%</td><td class="n">+2.1%</td></tr>
+<tr><td>Cranberries</td><td>Cranberry sauce, can</td><td class="n">× 1</td><td class="n">$3.39</td><td class="n">$3.99</td><td class="n">+17.7%</td><td class="n">+4.9%</td></tr>
+<tr><td>Veggie tray</td><td>Baby carrots, 1 lb</td><td class="n">× 1</td><td class="n">$2.49</td><td class="n">$2.49</td><td class="n">0%</td><td class="n">+4.9%</td></tr>
+<tr><td>Pumpkin pie mix</td><td>Libby's pumpkin</td><td class="n">× 2</td><td class="n">$6.00</td><td class="n">$8.58</td><td class="n">+43.0%</td><td class="n">+4.9%</td></tr>
+<tr><td>Apple cider</td><td>64 oz</td><td class="n">× 2</td><td class="n">$7.98</td><td class="n">$13.98</td><td class="n">+75.2%</td><td class="n">+3.5%</td></tr>
+<tr><td>Milk</td><td>Farmland, ½ gallon</td><td class="n">× 2</td><td class="n">$11.98</td><td class="n">$17.98</td><td class="n">+50.1%</td><td class="n">+0.9%</td></tr>
+<tr><td>Butter</td><td>Land O'Lakes, 1 lb</td><td class="n">× 1</td><td class="n">$9.49</td><td class="n">$9.49</td><td class="n">0%</td><td class="n">−12.6%</td></tr>
+<tr><td>Flour</td><td>Hecker's, 5 lb</td><td class="n">× 0.2</td><td class="n">$1.40</td><td class="n">$1.40</td><td class="n">0%</td><td class="n">−3.9%</td></tr>
+</tbody></table></div>
+<p class="cap">Last column: the national October 2025→2026 change in the BLS price or CPI group used for that item, shown to flag how far the Post's one-year changes depart from official measures.</p>
+<p><strong>History.</strong> 2026 and 2025 use the Post's prices directly. Years up to 2024 move back from the 2025 Post price with the item's own BLS price series where one exists, otherwise its CPI group (the same index used nationally).</p>
+<h3>Items not in the Post survey</h3>
+<p>The seven remaining items (russet potatoes, peas, green beans, pie crusts, whipping cream, eggs, sugar) use the national price times an NYC price factor:</p>
+<div class="eq">factor(y) = RPP_goods(NY metro, 2024)/100 × [ CPI_FAH,NY(y) / CPI_FAH,US(y) ] / [ CPI_FAH,NY(2024) / CPI_FAH,US(2024) ]</div>
+<p>BEA's Regional Price Parity for goods in the New York–Newark–Jersey City metro (<code>RPPGOOD35620</code>) is 110.3 in 2024. It is moved to other years by the ratio of the New York and U.S. food-at-home CPIs (annual averages, <code>CUURA101SAF11</code> vs <code>CUUR0000SAF11</code>). The factor is 1.121 in 1995, 1.136 in 2019, 1.108 in 2025 and 1.118 in 2026.</p>
+</section>
+
+<section id="a6">
+<h2><span class="num">A6</span>Index numbers and contributions</h2>
+<p>Two indexes compare the basket with general prices (chart 2): a fixed-basket Laspeyres index, which is simply total cost relative to a base year, and a geometric (Cobb-Douglas) index that weights items by expenditure share and allows for substitution:</p>
+<div class="eq">Laspeyres(y) = Σ_i q_i p_i(y) / Σ_i q_i p_i(base)
+Geometric(y) = Π_i ( p_i(y) / p_i(base) ) ^ w_i,   w_i = base-year cost share</div>
+<p>Item contributions (chart 3) are each item's dollar change, q_i × Δp_i, so they add up exactly to the change in total cost. Comparisons with CPI test relative prices, not affordability: removing food from CPI changes the result by under one percentage point, so the comparison is not circular.</p>
+</section>
+
+<section id="a7">
+<h2><span class="num">A7</span>Affordability measures</h2>
+<p>Affordability compares the dinner with income rather than prices. All measures are national:</p>
+<ul class="tight">
+  <li><strong>Hours of work</strong> at the average hourly earnings of production and nonsupervisory workers (<code>AHETPI</code>) and at the federal minimum wage (<code>FEDMINNFRWG</code>, chart 7).</li>
+  <li><strong>Share of a week's median household income</strong> (<code>MEHOINUSA646N</code>).</li>
+  <li><strong>Per-guest cost vs a day's income per person</strong>: disposable income (<code>A229RC0</code>) and "discretionary" income = disposable income minus personal spending on housing, utilities, food, health care and energy (BEA, Q3).</li>
+  <li><strong>Household budgets by group</strong> (charts 4–6): BLS Consumer Expenditure Survey means by income fifth and by 14 household types. Essentials = shelter, utilities, food at home and health care (robustness: plus household operations incl. child care and vehicle insurance). Because the lowest fifth reports spending far above its income, total spending is used as the budget for fifths; changes use 3-year averages (2017–19 vs 2023–25).</li>
+</ul>
+</section>
+
+<div class="part">
+<div class="part-label">Part B · Limitations</div>
+</div>
+
+<section id="b1">
+<h2><span class="num">B1</span>Observed, estimated and imputed prices</h2>
+<p>Every price in the index falls into one of three classes. The distinction matters: an observed price can be wrong only through survey error; an estimated or imputed price also carries model error.</p>
+<div class="grid2">
+  <div class="card"><span class="pill p-obs">Observed</span><h4>Measured in a store survey</h4><p>BLS October average prices (russet potatoes, milk, butter, eggs, flour, sugar; turkey to 2019). One-time anchor prices in 2026: the AFBF survey and cider listings. NYC: New York Post store prices for 2025 and 2026.</p></div>
+  <div class="card"><span class="pill p-est">Estimated</span><h4>Predicted by a validated model</h4><p>Turkey, March 2020–October 2026, from the backtested ensemble (A4). Comes with an empirical error band (≈8% typical October error).</p></div>
+  <div class="card"><span class="pill p-imp">Imputed</span><h4>Filled by an assumption</h4><p>Anchor items before 2026 (CPI-scaled); green beans (pea proxy); butter 2012–18 (dairy CPI); October 2013 turkey and October 2025 all items (Sep/Nov average); NYC Post items before 2025 (index-scaled); NYC non-Post items (national × factor).</p></div>
+</div>
+
+<h3>Share of the national dinner cost by class</h3>
+<div class="legend"><span><i class="s-obs"></i>Observed</span><span><i class="s-est"></i>Estimated</span><span><i class="s-imp"></i>Imputed</span></div>
+<div class="bars" role="img" aria-label="Share of national dinner cost by observed, estimated and imputed prices, selected years">
+  <div class="bar"><span class="yr">1995</span><span class="track"><span class="s-obs" style="width:58%"></span><span class="s-imp" style="width:42%"></span></span><span class="tot">$41.98</span></div>
+  <div class="bar"><span class="yr">2005</span><span class="track"><span class="s-obs" style="width:56%"></span><span class="s-imp" style="width:44%"></span></span><span class="tot">$51.47</span></div>
+  <div class="bar"><span class="yr">2013</span><span class="track"><span class="s-obs" style="width:15%"></span><span class="s-imp" style="width:85%"></span></span><span class="tot">$68.71</span></div>
+  <div class="bar"><span class="yr">2019</span><span class="track"><span class="s-obs" style="width:58%"></span><span class="s-imp" style="width:42%"></span></span><span class="tot">$66.73</span></div>
+  <div class="bar"><span class="yr">2020</span><span class="track"><span class="s-obs" style="width:20%"></span><span class="s-est" style="width:39%"></span><span class="s-imp" style="width:41%"></span></span><span class="tot">$68.68</span></div>
+  <div class="bar"><span class="yr">2024</span><span class="track"><span class="s-obs" style="width:23%"></span><span class="s-est" style="width:36%"></span><span class="s-imp" style="width:41%"></span></span><span class="tot">$83.35</span></div>
+  <div class="bar"><span class="yr">2025</span><span class="track"><span class="s-est" style="width:39%"></span><span class="s-imp" style="width:61%"></span></span><span class="tot">$87.21</span></div>
+  <div class="bar"><span class="yr">2026</span><span class="track"><span class="s-obs" style="width:58%"></span><span class="s-est" style="width:39%"></span><span class="s-imp" style="width:2%"></span></span><span class="tot">$87.39</span></div>
+</div>
+<p class="cap">Shares of each year's national dinner cost. 2013 is mostly imputed because the turkey month and the butter series are both missing; 2025 has no observed price because the shutdown cancelled October collection. In 2026, observed = $16.89 BLS + $34.05 anchors. Totals here are recomputed from item costs and may differ from headline figures by a few cents of rounding.</p>
+<div class="callout"><strong>Reading the history.</strong> Before 2026, about 40% of every year's cost is imputed from CPI groups. The level of each anchor item is pinned to a real 2026 price, but its path back to 1995 is the path of its CPI group, not of the item.</div>
+
+<h3>NYC series</h3>
+<p>In 2025 and 2026, 11 of 18 NYC items are observed Post prices (about 84% of the 2026 NYC cost, including the turkey). The rest are imputed as national × factor, and since national turkey and anchors are themselves estimated or imputed in some years, NYC history before 2025 is almost entirely imputed.</p>
+</section>
+
+<section id="b2">
+<h2><span class="num">B2</span>Price limitations</h2>
+<ol class="lim">
+<li><span class="pill sev sev-h">High</span><strong>Group indexes miss item-specific swings.</strong> Anchor items follow broad CPI groups (bakery, fruits &amp; vegetables, dairy, beverages). A bad cranberry harvest or a canned-pumpkin shortage would not show. Errors largely cancel across items but can be large for a single item.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>One-time anchors.</strong> Each anchor rests on one survey or four listings in one year. A sale or regional quirk in that observation shifts the item's entire 32-year history by the same proportion.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>October, not Thanksgiving week.</strong> BLS prices are October averages. Holiday promotions (turkey loss leaders especially) and late-November spikes are not captured; this is the main reason the AFBF turkey diverges in 2025–26.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>National averages.</strong> BLS average prices mix store types, brands and regions. No household pays exactly these prices; low-income households may pay more (fewer large stores) or less (discount stores, store brands).</li>
+<li><span class="pill sev sev-l">Low</span><strong>Fixed menu and quantities.</strong> The basket does not substitute when prices change (e.g., fewer eggs during bird flu), which slightly overstates cost increases. The geometric index partly addresses this.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Scope.</strong> The menu omits alcohol, appetizers, non-food items (foil, disposable pans), travel and cooking energy, so it understates the full cost of hosting.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Shutdown fills and bridges.</strong> The Sep/Nov average for October 2013 and October 2025, and the dairy-CPI bridge for butter 2012–18, assume smooth movement through the gap.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Green-bean proxy.</strong> No direct price exists; frozen peas are used at the same price. The item is $1.99 of $87.</li>
+</ol>
+</section>
+
+<section id="b3">
+<h2><span class="num">B3</span>Turkey model limitations</h2>
+<ol class="lim">
+<li><span class="pill sev sev-h">High</span><strong>About 8% typical error on the largest item.</strong> October error averages 8.3% and reached 26% in the worst backtest October. On a $34 turkey line, that is roughly ±$3 typically and up to ±$9 in a bad year, against a 2025→26 national change of $0.18.</li>
+<li><span class="pill sev sev-h">High</span><strong>Divergence from the AFBF in 2025–26.</strong> The model puts turkey at +33% and +35% vs 2019; AFBF shows +3% and +14%. The two measure different things (regular shelf price vs volunteer-recorded holiday sale price), but there is no published BLS price to settle it. With the AFBF turkey the 2026 national dinner is $82.09; with the chicken ratio, $91.93.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>The past may not resemble the gap.</strong> Backtests span 2004–2019. The 2020–26 period had a pandemic, unusual inflation and the largest avian-flu outbreak on record; the error band assumes errors behave as in the backtests.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>Post-hoc model choice.</strong> The combination was adopted after seeing backtest results (disclosed in A4). It also wins under the original rule, which limits but does not remove the selection effect.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Few independent tests.</strong> Four backtest origins with overlapping horizons give 2,219 errors but far fewer independent Octobers; Diebold-Mariano results should be read as indicative.</li>
+</ol>
+</section>
+
+<section id="b4">
+<h2><span class="num">B4</span>New York City limitations</h2>
+<ol class="lim">
+<li><span class="pill sev sev-h">High</span><strong>The Post's changes are far larger than official indexes.</strong> Milk +50% vs +0.9%, cider +75% vs +3.5%, pumpkin +43% vs +4.9%. A news survey of a few stores, brands and dates is noisier than BLS; the 2025→26 NYC jump (+19%) should be treated with care.</li>
+<li><span class="pill sev sev-h">High</span><strong>Premium and branded items.</strong> The Post priced Bell &amp; Evans turkey ($3.99/lb) and name brands. A shopper buying a store-brand frozen turkey would pay much less, so the NYC total leans toward the upper-middle of the market.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>No store-level detail.</strong> Only the Post's per-item prices are available, not which store or how many stores each came from, so variance cannot be measured.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>Quantity scaling.</strong> Some Post items are a close but different product (canned cranberry sauce for fresh cranberries, crescent rolls for dinner rolls, baby carrots for a veggie tray), scaled linearly to menu quantities.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>The NYC factor is broad.</strong> It covers all goods in a metro area that includes New Jersey and the suburbs, and is moved through time with a metro grocery CPI. It will understate prices in high-cost Manhattan stores and overstate them at outer-borough discounters.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>NYC history is national history.</strong> Before 2025 NYC prices are backcast with national item indexes, so they assume NYC prices moved like U.S. prices.</li>
+</ol>
+</section>
+
+<section id="b5">
+<h2><span class="num">B5</span>Household-data limitations</h2>
+<ol class="lim">
+<li><span class="pill sev sev-h">High</span><strong>Low-income income is under-reported.</strong> The lowest fifth reports spending about twice its after-tax income (the bottom half, about 120% of pre-tax income), reflecting under-reported income, benefits and retirees drawing on savings. Shares of income for these groups are approximate.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>Survey changes.</strong> The Consumer Expenditure Survey began imputing missing income in 2004 and changed income questions in 2013; long-run comparisons of income shares cross these breaks (also checked within 2004–25 and 2013–25).</li>
+<li><span class="pill sev sev-m">Medium</span><strong>Group means hide variation.</strong> A fifth contains households of very different sizes, locations and tenure. It also misses people without stable housing, the population most exposed to food costs.</li>
+<li><span class="pill sev sev-m">Medium</span><strong>National, not NYC, budgets.</strong> NYC income bands were not built (the Census API key was unavailable), so charts 4–6 are national, and the dinner in charts 5 and 7 is priced at U.S. averages.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Federal minimum wage only.</strong> Chart 7 uses the federal $7.25. Many states and cities (including New York) are much higher, so it shows the floor, not typical low-wage pay.</li>
+<li><span class="pill sev sev-l">Low</span><strong>Gasoline excluded and national accounts include third-party payments.</strong> FRED's quintile gasoline series is broken from 2023; BEA health spending includes employer and government payments, which is why national essentials look flat.</li>
+</ol>
+</section>
+
+<section id="b6">
+<h2><span class="num">B6</span>Interpretation</h2>
+<ul class="tight">
+  <li><strong>Price vs affordability.</strong> "The dinner rose in line with CPI" is a statement about relative prices, not about whether households can afford it. Affordability is judged against wages and budgets (A7).</li>
+  <li><strong>Year-to-year changes are within error.</strong> The 2025→26 national change ($0.18) is far smaller than the turkey model's typical error; only multi-year changes should be read as signal.</li>
+  <li><strong>Not captured in annual data.</strong> The November 2025 shutdown delayed or cut SNAP benefits for millions of households just before Thanksgiving; this does not appear in any series used here.</li>
+</ul>
+</section>
+</main>
+
+<footer>Sources: U.S. Bureau of Labor Statistics (average prices, CPI, PPI, Consumer Expenditure Survey), Bureau of Economic Analysis, Census Bureau, IMF commodity prices and Federal Reserve data via FRED; American Farm Bureau Federation Thanksgiving survey; New York Post NYC price survey (November 2025 and 2026). All code and data: github.com/navdasari/thanksgiving-price-index.</footer>
+</div>
+</body>
+</html>
