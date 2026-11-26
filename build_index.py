@@ -189,22 +189,23 @@ cs.finish(fig, "Since 2019, the dinner's price rose less than prices overall",
 
 # 3. YoY contributions, recent years, grouped into four categories
 recent = contrib.loc[2015:]
-# All nine items; related foods share a hue family (dairy = golds, baking = blues)
+# All nine items, each colored to suggest the food itself (turkey keeps the accent red)
 groups = {"Turkey": (["Turkey"], cs.RED),
-          "Potatoes": (["Potatoes"], cs.GREEN),
-          "Butter": (["Butter"], cs.GOLD),
-          "Milk": (["Milk"], cs.LIGHT_GOLD),
-          "Eggs": (["Eggs"], cs.DARK_GOLD),
-          "Ice cream": (["Ice cream (pie)"], cs.PURPLE),
-          "Bread": (["Bread (stuffing)"], cs.BLUE),
-          "Flour": (["Flour (rolls, crust)"], cs.LIGHT_BLUE),
-          "Sugar": (["Sugar"], cs.GRAY)}
+          "Potatoes": (["Potatoes"], "#7A5A3A"),      # russet skin
+          "Butter": (["Butter"], "#F2CC4E"),          # butter yellow
+          "Milk": (["Milk"], "#BFD5E6"),              # milk-carton blue
+          "Eggs": (["Eggs"], "#F39B2E"),              # yolk orange
+          "Ice cream": (["Ice cream (pie)"], "#E79AB0"),  # strawberry
+          "Bread": (["Bread (stuffing)"], "#C98A4B"), # golden crust
+          "Flour": (["Flour (rolls, crust)"], "#E4D8C0"), # off-white flour
+          "Sugar": (["Sugar"], "#B4BAC2")}            # granulated, cool gray
 fig, ax = cs.figure()
 fig.subplots_adjust(top=0.72)
 pos = np.zeros(len(recent)); neg = np.zeros(len(recent))
 for name, (cols, c) in groups.items():
     v = recent[cols].sum(axis=1).values
-    ax.bar(recent.index, v, bottom=np.where(v >= 0, pos, neg), color=c, width=0.72, label=name, zorder=3)
+    ax.bar(recent.index, v, bottom=np.where(v >= 0, pos, neg), color=c, width=0.72, label=name, zorder=3,
+           edgecolor="white", linewidth=0.6)
     pos += np.where(v >= 0, v, 0); neg += np.where(v < 0, v, 0)
 ax.scatter(recent.index, recent.sum(axis=1), color=cs.TEXT, s=38, zorder=4, label="Net change")
 cs.baseline(ax, 0)
